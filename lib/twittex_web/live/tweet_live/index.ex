@@ -1,33 +1,30 @@
 defmodule TwittexWeb.TweetLive.Index do
   use TwittexWeb, :live_view
 
+  alias Twittex.Timeline.Tweet
+
+  @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok,
+     socket
+     |> stream(:tweets, Twittex.Timeline.list(:for_you))
+     |> stream(:logs, [])}
   end
 
-  def render(assigns) do
-    ~H"""
-    <div :for={{tweet, _i} <- @streams.tweets} id={"#{tweet.id}"}>
-      <%= tweet_card(tweet = tweet) %>
-    </div>
-    """
+  @impl true
+  def handle_params(params, _url, socket) do
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  def tweet_card(assigns) do
-    ~H"""
-    <div class="w-auto p-5 border-2">
-      <div class="flex flex-col">
-        <div class="flex items-center space-x-2">
-          <img src="https://www.w3schools.com/w3images/avatar2.png" class="rounded-full w-10" />
-          <span class="font-medium text-pretty">
-            <%= @tweet.user.name %>
-          </span>
-        </div>
-        <div class="ml-12">
-          <%= @tweet.text %>
-        </div>
-      </div>
-    </div>
-    """
+  defp apply_action(socket, :index, _params) do
+    socket
+    |> assign(:tweet, nil)
+  end
+
+  defp apply_action(socket, :new, _params) do
+    IO.inspect("TESTE", label: "TEST")
+
+    socket
+    |> assign(:tweet, %Tweet{})
   end
 end
