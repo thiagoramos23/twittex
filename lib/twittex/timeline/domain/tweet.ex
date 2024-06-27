@@ -1,4 +1,4 @@
-defmodule Twittex.Timeline.Tweet do
+defmodule Twittex.Timeline.Domain.Tweet do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -7,6 +7,7 @@ defmodule Twittex.Timeline.Tweet do
     field :image_url, :string
     belongs_to :user, Twittex.Accounts.User
 
+    has_many :likes, Twittex.Timeline.Domain.Like
     timestamps(type: :utc_datetime)
   end
 

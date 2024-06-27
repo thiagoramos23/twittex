@@ -3,6 +3,7 @@ defmodule TwittexWeb.TweetLive.FormComponent do
 
   alias Twittex.Timeline
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
