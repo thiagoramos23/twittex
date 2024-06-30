@@ -16,9 +16,7 @@ defmodule TwittexWeb.TweetLive.TweetCardComponent do
         </div>
       </div>
       <div class="flex justify-start items-center mt-4 space-x-14">
-        <div phx-click="comment">
-          <.icon name="hero-chat-bubble-left" class="w-6 h-6 text-gray-500" />
-        </div>
+        <.comment tweet={@tweet} />
         <.like tweet={@tweet} index={@index} />
       </div>
     </div>
@@ -32,6 +30,15 @@ defmodule TwittexWeb.TweetLive.TweetCardComponent do
       <.icon :if={@tweet.liked?} name="hero-heart-solid" class="w-6 h-6 bg-red-500" />
       <span class="text-gray-500"><%= @tweet.count_likes %></span>
     </div>
+    """
+  end
+
+  defp comment(assigns) do
+    ~H"""
+    <.link navigate={~p"/tweets/#{@tweet.id}/comments/new"}>
+      <.icon name="hero-chat-bubble-left" class="w-6 h-6 text-gray-500" />
+      <span class="text-gray-500"><%= @tweet.count_comments %></span>
+    </.link>
     """
   end
 end

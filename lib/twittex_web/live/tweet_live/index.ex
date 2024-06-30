@@ -6,11 +6,9 @@ defmodule TwittexWeb.TweetLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    params = %{user_id: socket.assigns.current_user.id}
-
     {:ok,
      socket
-     |> stream(:tweets, Twittex.Timeline.list(params, :for_you))
+     |> stream(:tweets, get_tweets(socket))
      |> stream(:logs, [])}
   end
 
@@ -22,16 +20,23 @@ defmodule TwittexWeb.TweetLive.Index do
   @impl true
   def handle_event(
         "like",
-        %{"tweet-id" => tweet_id, "index" => _tweet_index},
+        %{"tweet-id" => tweet_id, "index" => tweet_index},
         socket
       ) do
     case Timeline.manage(%{tweet_id: tweet_id, user: socket.assigns.current_user}, :toggle_like) do
-      {:ok, _liked_tweet} ->
-        {:noreply, socket}
+      {:ok, like} ->
+        tweet = Timeline.find_tweet_by_id(like.tweet_id, socket.assigns.current_user.id)
+        {:noreply, socket |> stream_insert(:tweets, tweet, at: tweet_index)}
 
       {:error, _error} ->
         {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_info({TwittexWeb.TweetLive.FormComponent, {:saved, tweet}}, socket) do
+    tweet = Timeline.find_tweet_by_id(tweet.id, socket.assigns.current_user.id)
+    {:noreply, socket |> stream_insert(:tweets, tweet, at: 0)}
   end
 
   defp apply_action(socket, :index, _params) do
@@ -42,5 +47,10 @@ defmodule TwittexWeb.TweetLive.Index do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:tweet, %Tweet{})
+  end
+
+  defp get_tweets(socket) do
+    params = %{user_id: socket.assigns.current_user.id}
+    Twittex.Timeline.list(params, :all)
   end
 end

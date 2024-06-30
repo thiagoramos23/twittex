@@ -8,6 +8,8 @@ defmodule Twittex.Timeline.Domain.Tweet do
     belongs_to :user, Twittex.Accounts.User
 
     has_many :likes, Twittex.Timeline.Domain.Like
+    has_many :comments, Twittex.Timeline.Domain.TweetComment
+
     timestamps(type: :utc_datetime)
   end
 

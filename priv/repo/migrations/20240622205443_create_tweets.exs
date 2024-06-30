@@ -5,7 +5,7 @@ defmodule Twittex.Repo.Migrations.CreateTweets do
     create table(:tweets) do
       add :text, :text
       add :image_url, :string
-      add :user_id, references(:users, on_delete: :nothing)
+      add :user_id, references(:users, on_delete: :delete_all)
 
       timestamps(type: :utc_datetime)
     end

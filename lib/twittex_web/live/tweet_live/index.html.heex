@@ -5,14 +5,16 @@
   >
     New Tweet
   </.link>
-  <div :for={{index, tweet} <- @streams.tweets} id={"#{tweet.id}"} class="mt-5">
-    <.live_component
-      id={index}
-      module={TwittexWeb.TweetLive.TweetCardComponent}
-      tweet={tweet}
-      user={@current_user}
-      index={index}
-    />
+  <div id="tweets" phx-update="stream">
+    <div :for={{index, tweet} <- @streams.tweets} id={index} class="mt-5">
+      <.live_component
+        id={index}
+        module={TwittexWeb.TweetLive.TweetCardComponent}
+        tweet={tweet}
+        user={@current_user}
+        index={index}
+      />
+    </div>
   </div>
 </div>
 
