@@ -51,9 +51,7 @@ defmodule TwittexWeb.TweetLive.FormComponent do
     tweet_params = Map.merge(tweet_params, %{"user_id" => socket.assigns.current_user.id})
 
     case Timeline.manage(tweet_params, :create_tweet) do
-      {:ok, tweet} ->
-        notify_parent({:saved, tweet})
-
+      {:ok, _tweet} ->
         {:noreply,
          socket
          |> put_flash(:info, "Tweet created successfully")
@@ -67,6 +65,4 @@ defmodule TwittexWeb.TweetLive.FormComponent do
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
   end
-
-  defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 end

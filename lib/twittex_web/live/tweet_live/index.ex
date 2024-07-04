@@ -3,11 +3,17 @@ defmodule TwittexWeb.TweetLive.Index do
 
   alias Twittex.Timeline
   alias Twittex.Timeline.Domain.Tweet
+  alias Twittex.Events.TimelineEvents
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Timeline.subscribe()
+    end
+
     {:ok,
      socket
+     |> stream_configure(:tweets, dom_id: &"tweets-#{&1.id}")
      |> stream(:tweets, get_tweets(socket))
      |> stream(:logs, [])}
   end
@@ -34,8 +40,39 @@ defmodule TwittexWeb.TweetLive.Index do
   end
 
   @impl true
-  def handle_info({TwittexWeb.TweetLive.FormComponent, {:saved, tweet}}, socket) do
-    tweet = Timeline.find_tweet_by_id(tweet.id, socket.assigns.current_user.id)
+  def handle_info(
+        {Timeline, %TimelineEvents.TweetCreated{tweet_id: tweet_id, user_id: user_id}},
+        socket
+      ) do
+    update_timeline(tweet_id, user_id, socket)
+  end
+
+  @impl true
+  def handle_info(
+        {Timeline, %TimelineEvents.TweetLiked{tweet_id: tweet_id, user_id: user_id}},
+        socket
+      ) do
+    update_timeline(tweet_id, user_id, socket)
+  end
+
+  @impl true
+  def handle_info(
+        {Timeline, %TimelineEvents.TweetDisliked{tweet_id: tweet_id, user_id: user_id}},
+        socket
+      ) do
+    update_timeline(tweet_id, user_id, socket)
+  end
+
+  @impl true
+  def handle_info(
+        {Timeline, %TimelineEvents.TweetCommented{tweet_id: tweet_id, user_id: user_id}},
+        socket
+      ) do
+    update_timeline(tweet_id, user_id, socket)
+  end
+
+  defp update_timeline(tweet_id, user_id, socket) do
+    tweet = Timeline.find_tweet_by_id(tweet_id, user_id)
     {:noreply, socket |> stream_insert(:tweets, tweet, at: 0)}
   end
 
