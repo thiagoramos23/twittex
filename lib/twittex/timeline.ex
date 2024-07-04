@@ -79,7 +79,7 @@ defmodule Twittex.Timeline do
     {:ok, tweet}
   end
 
-  defp broadcast({:ok, tweet_comment}, :tweet_comment) do
+  defp broadcast({:ok, tweet_comment}, :tweet_commented) do
     broadcast!(%TweetCommented{
       user_id: tweet_comment.user_id,
       tweet_id: tweet_comment.tweet_id,

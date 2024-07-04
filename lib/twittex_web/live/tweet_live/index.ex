@@ -72,7 +72,7 @@ defmodule TwittexWeb.TweetLive.Index do
   end
 
   defp update_timeline(tweet_id, user_id, socket) do
-    tweet = Timeline.find_tweet_by_id(tweet_id, user_id)
+    tweet = Timeline.find_tweet_by_id(tweet_id, socket.assigns.current_user.id)
     {:noreply, socket |> stream_insert(:tweets, tweet, at: 0)}
   end
 
