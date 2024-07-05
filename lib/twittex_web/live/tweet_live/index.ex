@@ -41,37 +41,37 @@ defmodule TwittexWeb.TweetLive.Index do
 
   @impl true
   def handle_info(
-        {Timeline, %TimelineEvents.TweetCreated{tweet_id: tweet_id, user_id: user_id}},
+        {Timeline, %TimelineEvents.TweetCreated{tweet_id: tweet_id}},
         socket
       ) do
-    update_timeline(tweet_id, user_id, socket)
+    update_timeline(tweet_id, socket)
   end
 
   @impl true
   def handle_info(
-        {Timeline, %TimelineEvents.TweetLiked{tweet_id: tweet_id, user_id: user_id}},
+        {Timeline, %TimelineEvents.TweetLiked{tweet_id: tweet_id}},
         socket
       ) do
-    update_timeline(tweet_id, user_id, socket)
+    update_timeline(tweet_id, socket)
   end
 
   @impl true
   def handle_info(
-        {Timeline, %TimelineEvents.TweetDisliked{tweet_id: tweet_id, user_id: user_id}},
+        {Timeline, %TimelineEvents.TweetDisliked{tweet_id: tweet_id}},
         socket
       ) do
-    update_timeline(tweet_id, user_id, socket)
+    update_timeline(tweet_id, socket)
   end
 
   @impl true
   def handle_info(
-        {Timeline, %TimelineEvents.TweetCommented{tweet_id: tweet_id, user_id: user_id}},
+        {Timeline, %TimelineEvents.TweetCommented{tweet_id: tweet_id}},
         socket
       ) do
-    update_timeline(tweet_id, user_id, socket)
+    update_timeline(tweet_id, socket)
   end
 
-  defp update_timeline(tweet_id, user_id, socket) do
+  defp update_timeline(tweet_id, socket) do
     tweet = Timeline.find_tweet_by_id(tweet_id, socket.assigns.current_user.id)
     {:noreply, socket |> stream_insert(:tweets, tweet, at: 0)}
   end
