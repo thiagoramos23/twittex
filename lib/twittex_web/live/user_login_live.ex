@@ -1,4 +1,5 @@
 defmodule TwittexWeb.UserLoginLive do
+  @moduledoc false
   use TwittexWeb, :live_view
 
   def render(assigns) do

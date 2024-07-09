@@ -1,8 +1,9 @@
 defmodule TwittexWeb.UserAuth do
+  @moduledoc false
   use TwittexWeb, :verified_routes
 
-  import Plug.Conn
   import Phoenix.Controller
+  import Plug.Conn
 
   alias Twittex.Accounts
 
@@ -93,7 +94,10 @@ defmodule TwittexWeb.UserAuth do
   def fetch_current_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Accounts.get_user_by_session_token(user_token)
-    assign(conn, :current_user, user)
+
+    conn
+    |> assign(:current_user, user)
+    |> assign(:current_profile, user.profile)
   end
 
   defp ensure_user_token(conn) do
@@ -175,11 +179,14 @@ defmodule TwittexWeb.UserAuth do
   end
 
   defp mount_current_user(socket, session) do
-    Phoenix.Component.assign_new(socket, :current_user, fn ->
-      if user_token = session["user_token"] do
-        Accounts.get_user_by_session_token(user_token)
-      end
-    end)
+    if user_token = session["user_token"] do
+      current_user = Accounts.get_user_by_session_token(user_token)
+      Phoenix.Component.assign_new(socket, :current_user, fn -> current_user end)
+
+      Phoenix.Component.assign_new(socket, :current_profile, fn ->
+        if current_user, do: current_user.profile
+      end)
+    end
   end
 
   @doc """

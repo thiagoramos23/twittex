@@ -1,4 +1,5 @@
 defmodule TwittexWeb.TweetLive.TweetCardComponent do
+  @moduledoc false
   use TwittexWeb, :live_component
 
   def render(assigns) do
@@ -8,7 +9,7 @@ defmodule TwittexWeb.TweetLive.TweetCardComponent do
         <div class="flex items-center space-x-2">
           <img src="https://www.w3schools.com/w3images/avatar2.png" class="rounded-full w-10" />
           <span class="font-medium text-pretty">
-            <%= @tweet.user.email %>
+            <%= @tweet.profile.name %>
           </span>
         </div>
         <div class="ml-12">

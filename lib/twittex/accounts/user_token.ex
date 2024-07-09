@@ -1,6 +1,9 @@
 defmodule Twittex.Accounts.UserToken do
+  @moduledoc false
   use Ecto.Schema
+
   import Ecto.Query
+
   alias Twittex.Accounts.UserToken
 
   @hash_algorithm :sha256

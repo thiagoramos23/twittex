@@ -1,10 +1,11 @@
 defmodule Twittex.AccountsTest do
   use Twittex.DataCase
 
-  alias Twittex.Accounts
-
   import Twittex.AccountsFixtures
-  alias Twittex.Accounts.{User, UserToken}
+
+  alias Twittex.Accounts
+  alias Twittex.Accounts.User
+  alias Twittex.Accounts.UserToken
 
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do

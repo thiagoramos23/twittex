@@ -4,9 +4,12 @@ defmodule Twittex.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias Twittex.Repo
 
-  alias Twittex.Accounts.{User, UserToken, UserNotifier}
+  alias Twittex.Accounts.Profile
+  alias Twittex.Accounts.User
+  alias Twittex.Accounts.UserNotifier
+  alias Twittex.Accounts.UserToken
+  alias Twittex.Repo
 
   ## Database getters
 
@@ -20,7 +23,7 @@ defmodule Twittex.Accounts do
 
       iex> get_user_by_email("unknown@example.com")
       nil
-
+  %{name: user.}
   """
   def get_user_by_email(email) when is_binary(email) do
     Repo.get_by(User, email: email)
@@ -38,8 +41,7 @@ defmodule Twittex.Accounts do
       nil
 
   """
-  def get_user_by_email_and_password(email, password)
-      when is_binary(email) and is_binary(password) do
+  def get_user_by_email_and_password(email, password) when is_binary(email) and is_binary(password) do
     user = Repo.get_by(User, email: email)
     if User.valid_password?(user, password), do: user
   end
@@ -75,8 +77,23 @@ defmodule Twittex.Accounts do
 
   """
   def register_user(attrs) do
+    Twittex.Repo.transaction(fn ->
+      with {:ok, user} <- create_user(attrs),
+           {:ok, _profile} <- create_profile(attrs, user) do
+        user
+      end
+    end)
+  end
+
+  defp create_user(attrs) do
     %User{}
     |> User.registration_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  defp create_profile(attrs, user) do
+    %Profile{}
+    |> Profile.changeset(%{name: attrs["name"], user_id: user.id})
     |> Repo.insert()
   end
 
@@ -231,7 +248,7 @@ defmodule Twittex.Accounts do
   """
   def get_user_by_session_token(token) do
     {:ok, query} = UserToken.verify_session_token_query(token)
-    Repo.one(query)
+    query |> Repo.one() |> Repo.preload(:profile)
   end
 
   @doc """

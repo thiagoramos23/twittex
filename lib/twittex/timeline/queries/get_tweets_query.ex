@@ -1,21 +1,22 @@
 defmodule Twittex.Timeline.Queries.GetTweetsQuery do
+  @moduledoc false
   import Ecto.Query
 
-  alias Twittex.Timeline.Domain.Tweet
   alias Twittex.Timeline.Domain.Like
+  alias Twittex.Timeline.Domain.Tweet
 
   def build do
     from tweet in Tweet,
-      preload: [:user, :likes, :comments],
+      preload: [:likes, :comments, :profile],
       order_by: [desc: tweet.inserted_at]
   end
 
-  def with_user_likes(query, user_id) do
+  def with_profile_likes(query, profile_id) do
     from tweet in query,
       left_join:
         like in subquery(
           from likes in Like,
-            where: likes.user_id == ^user_id,
+            where: likes.profile_id == ^profile_id,
             select: likes
         ),
       on: tweet.id == like.tweet_id,
@@ -25,9 +26,9 @@ defmodule Twittex.Timeline.Queries.GetTweetsQuery do
       }
   end
 
-  def by_user_id(query, user_id) do
+  def by_profile_id(query, profile_id) do
     from tweet in query,
-      where: tweet.user_id == ^user_id
+      where: tweet.profile_id == ^profile_id
   end
 
   def by_id(query, id), do: from(tweet in query, where: tweet.id == ^id)

@@ -1,4 +1,5 @@
 defmodule TwittexWeb.TweetLive.FormComponent do
+  @moduledoc false
   use TwittexWeb, :live_component
 
   alias Twittex.Timeline
@@ -48,7 +49,7 @@ defmodule TwittexWeb.TweetLive.FormComponent do
   end
 
   defp save_tweet(socket, :new, tweet_params) do
-    tweet_params = Map.merge(tweet_params, %{"user_id" => socket.assigns.current_user.id})
+    tweet_params = Map.put(tweet_params, "profile_id", socket.assigns.current_profile.id)
 
     case Timeline.manage(tweet_params, :create_tweet) do
       {:ok, _tweet} ->

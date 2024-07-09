@@ -1,22 +1,23 @@
 defmodule Twittex.Timeline do
+  @moduledoc false
   import Ecto.Query
 
-  alias Twittex.Timeline.Values.Tweet, as: TweetValue
+  alias Twittex.Events.TimelineEvents.TweetCommented
+  alias Twittex.Events.TimelineEvents.TweetCreated
+  alias Twittex.Events.TimelineEvents.TweetDisliked
+  alias Twittex.Events.TimelineEvents.TweetLiked
   alias Twittex.Repo
   alias Twittex.Timeline.Domain.Like
   alias Twittex.Timeline.Domain.Tweet
   alias Twittex.Timeline.Domain.TweetComment
-  alias Twittex.Timeline.GetTweets
   alias Twittex.Timeline.GetTweet
-  alias Twittex.Events.TimelineEvents.TweetCreated
-  alias Twittex.Events.TimelineEvents.TweetLiked
-  alias Twittex.Events.TimelineEvents.TweetDisliked
-  alias Twittex.Events.TimelineEvents.TweetCommented
+  alias Twittex.Timeline.GetTweets
+  alias Twittex.Timeline.Values.Tweet, as: TweetValue
 
   @pubsub Twittex.PubSub
   @topic "tweets"
 
-  def subscribe() do
+  def subscribe do
     Phoenix.PubSub.subscribe(@pubsub, @topic)
   end
 
@@ -39,22 +40,22 @@ defmodule Twittex.Timeline do
     |> broadcast(:tweet_commented)
   end
 
-  def manage(%{user: user, tweet_id: tweet_id}, :toggle_like) do
-    like_for_tweet = get_like_for_tweet(user.id, tweet_id)
+  def manage(%{profile: profile, tweet_id: tweet_id}, :toggle_like) do
+    like_for_tweet = get_like_for_tweet(profile.id, tweet_id)
 
     if like_for_tweet do
       Repo.delete(like_for_tweet, returning: true)
-      broadcast({:ok, %Like{user_id: user.id, tweet_id: tweet_id}}, :tweet_disliked)
+      broadcast({:ok, %Like{profile_id: profile.id, tweet_id: tweet_id}}, :tweet_disliked)
     else
       %Like{}
-      |> Like.changeset(%{user_id: user.id, tweet_id: tweet_id})
+      |> Like.changeset(%{profile_id: profile.id, tweet_id: tweet_id})
       |> Repo.insert()
       |> broadcast(:tweet_liked)
     end
   end
 
-  def find_tweet_by_id(id, user_id) do
-    result = GetTweet.call(id, user_id)
+  def find_tweet_by_id(id, profile_id) do
+    result = GetTweet.call(id, profile_id)
     TweetValue.from_map(result)
   end
 
@@ -66,22 +67,22 @@ defmodule Twittex.Timeline do
     TweetComment.changeset(tweet_comment, params)
   end
 
-  defp get_like_for_tweet(user_id, tweet_id) do
+  defp get_like_for_tweet(profile_id, tweet_id) do
     Repo.one(
       from likes in Like,
-        where: likes.user_id == ^user_id,
+        where: likes.profile_id == ^profile_id,
         where: likes.tweet_id == ^tweet_id
     )
   end
 
   defp broadcast({:ok, tweet}, :tweet_created) do
-    broadcast!(%TweetCreated{user_id: tweet.user_id, tweet_id: tweet.id})
+    broadcast!(%TweetCreated{profile_id: tweet.profile_id, tweet_id: tweet.id})
     {:ok, tweet}
   end
 
   defp broadcast({:ok, tweet_comment}, :tweet_commented) do
     broadcast!(%TweetCommented{
-      user_id: tweet_comment.user_id,
+      profile_id: tweet_comment.profile_id,
       tweet_id: tweet_comment.tweet_id,
       tweet_comment_id: tweet_comment.id
     })
@@ -90,12 +91,12 @@ defmodule Twittex.Timeline do
   end
 
   defp broadcast({:ok, like}, :tweet_liked) do
-    broadcast!(%TweetLiked{user_id: like.user_id, tweet_id: like.tweet_id})
+    broadcast!(%TweetLiked{profile_id: like.profile_id, tweet_id: like.tweet_id})
     {:ok, like}
   end
 
   defp broadcast({:ok, like}, :tweet_disliked) do
-    broadcast!(%TweetDisliked{user_id: like.user_id, tweet_id: like.tweet_id})
+    broadcast!(%TweetDisliked{profile_id: like.profile_id, tweet_id: like.tweet_id})
     {:ok, like}
   end
 

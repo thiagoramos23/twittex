@@ -1,4 +1,5 @@
 defmodule TwittexWeb.TweetCommentLive.Index do
+  @moduledoc false
   use TwittexWeb, :live_view
 
   alias Twittex.Timeline
@@ -15,15 +16,14 @@ defmodule TwittexWeb.TweetCommentLive.Index do
   end
 
   defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:tweet_comment, nil)
+    assign(socket, :tweet_comment, nil)
   end
 
   defp apply_action(socket, :new, params) do
     socket
     |> assign(
       :tweet,
-      Timeline.find_tweet_by_id(params["tweet_id"], socket.assigns.current_user.id)
+      Timeline.find_tweet_by_id(params["tweet_id"], socket.assigns.current_profile.id)
     )
     |> assign(:tweet_comment, %TweetComment{})
   end

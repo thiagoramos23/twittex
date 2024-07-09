@@ -1,4 +1,5 @@
 defmodule TwittexWeb.TweetCommentLive.FormComponent do
+  @moduledoc false
   use TwittexWeb, :live_component
 
   alias Twittex.Timeline
@@ -48,11 +49,9 @@ defmodule TwittexWeb.TweetCommentLive.FormComponent do
   end
 
   defp save_tweet_comment(socket, :new, tweet_comment_params) do
-    IO.inspect(tweet_comment_params, label: "TWEET COMMENT PARAMS")
-
     tweet_comment_params =
       Map.merge(tweet_comment_params, %{
-        "user_id" => socket.assigns.current_user.id,
+        "profile_id" => socket.assigns.current_profile.id,
         "tweet_id" => socket.assigns.tweet.id
       })
 

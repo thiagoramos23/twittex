@@ -4,7 +4,7 @@
   </.link>
   <div id="tweets" phx-update="stream">
     <div :for={{id, tweet} <- @streams.tweets} id={id} class="mt-5">
-      <.live_component id={id} module={TwittexWeb.TweetLive.TweetCardComponent} tweet={tweet} user={@current_user}
+      <.live_component id={id} module={TwittexWeb.TweetLive.TweetCardComponent} tweet={tweet} user={@current_profile}
         index={id} />
     </div>
   </div>
@@ -12,5 +12,5 @@
 
 <.modal :if={@live_action in [:new, :edit]} id="post-modal" show on_cancel={JS.patch(~p"/")}>
   <.live_component module={TwittexWeb.TweetLive.FormComponent} id={@tweet.id || :new} action={@live_action}
-    tweet={@tweet} current_user={@current_user} patch={~p"/"} />
+    tweet={@tweet} current_profile={@current_profile} patch={~p"/"} />
 </.modal>

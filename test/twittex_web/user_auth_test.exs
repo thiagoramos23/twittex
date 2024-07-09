@@ -1,10 +1,11 @@
 defmodule TwittexWeb.UserAuthTest do
   use TwittexWeb.ConnCase, async: true
 
+  import Twittex.AccountsFixtures
+
   alias Phoenix.LiveView
   alias Twittex.Accounts
   alias TwittexWeb.UserAuth
-  import Twittex.AccountsFixtures
 
   @remember_me_cookie "_twittex_web_user_remember_me"
 
@@ -139,7 +140,7 @@ defmodule TwittexWeb.UserAuthTest do
     end
 
     test "assigns nil to current_user assign if there isn't a user_token", %{conn: conn} do
-      session = conn |> get_session()
+      session = get_session(conn)
 
       {:cont, updated_socket} =
         UserAuth.on_mount(:mount_current_user, %{}, session, %LiveView.Socket{})
@@ -173,7 +174,7 @@ defmodule TwittexWeb.UserAuthTest do
     end
 
     test "redirects to login page if there isn't a user_token", %{conn: conn} do
-      session = conn |> get_session()
+      session = get_session(conn)
 
       socket = %LiveView.Socket{
         endpoint: TwittexWeb.Endpoint,
@@ -200,7 +201,7 @@ defmodule TwittexWeb.UserAuthTest do
     end
 
     test "doesn't redirect if there is no authenticated user", %{conn: conn} do
-      session = conn |> get_session()
+      session = get_session(conn)
 
       assert {:cont, _updated_socket} =
                UserAuth.on_mount(

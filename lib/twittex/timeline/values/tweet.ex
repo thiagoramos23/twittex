@@ -1,13 +1,14 @@
 defmodule Twittex.Timeline.Values.Tweet do
+  @moduledoc false
   use TypedStruct
 
-  alias Twittex.Accounts.Values.User
+  alias Twittex.Accounts.Values.Profile
 
   typedstruct do
     field :id, non_neg_integer(), enforce: true
     field :text, String.t(), enforce: true
     field :image_url, String.t()
-    field :user, User.t()
+    field :profile, Profile.t()
     field :liked?, boolean(), default: false
     field :count_likes, non_neg_integer(), default: 0
     field :count_comments, non_neg_integer(), default: 0
@@ -18,7 +19,7 @@ defmodule Twittex.Timeline.Values.Tweet do
       id: tweet.id,
       text: tweet.text,
       image_url: tweet.image_url,
-      user: User.from_schema(tweet.user),
+      profile: Profile.from_schema(tweet.profile),
       liked?: false,
       count_likes: length(tweet.likes),
       count_comments: length(tweet.comments)
@@ -30,7 +31,7 @@ defmodule Twittex.Timeline.Values.Tweet do
       id: tweet.id,
       text: tweet.text,
       image_url: tweet.image_url,
-      user: User.from_schema(tweet.user),
+      profile: Profile.from_schema(tweet.profile),
       liked?: liked,
       count_likes: length(tweet.likes),
       count_comments: length(tweet.comments)

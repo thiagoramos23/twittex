@@ -12,13 +12,7 @@
       </div>
     </div>
   </div>
-  <.live_component
-    module={TwittexWeb.TweetCommentLive.FormComponent}
-    id={@tweet_comment.id || :new}
-    action={@live_action}
-    tweet={@tweet}
-    tweet_comment={@tweet_comment}
-    current_user={@current_user}
-    patch={~p"/"}
-  />
+  <.live_component module={TwittexWeb.TweetCommentLive.FormComponent} id={@tweet_comment.id || :new}
+    action={@live_action} tweet={@tweet} tweet_comment={@tweet_comment} current_profile={@current_profile}
+    patch={~p"/"} />
 </.modal>

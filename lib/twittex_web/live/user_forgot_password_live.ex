@@ -1,4 +1,5 @@
 defmodule TwittexWeb.UserForgotPasswordLive do
+  @moduledoc false
   use TwittexWeb, :live_view
 
   alias Twittex.Accounts

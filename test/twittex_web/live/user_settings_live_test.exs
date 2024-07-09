@@ -1,9 +1,10 @@
 defmodule TwittexWeb.UserSettingsLiveTest do
   use TwittexWeb.ConnCase, async: true
 
-  alias Twittex.Accounts
   import Phoenix.LiveViewTest
   import Twittex.AccountsFixtures
+
+  alias Twittex.Accounts
 
   describe "Settings page" do
     test "renders settings page", %{conn: conn} do
