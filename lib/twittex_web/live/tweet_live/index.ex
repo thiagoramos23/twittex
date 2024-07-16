@@ -12,10 +12,12 @@ defmodule TwittexWeb.TweetLive.Index do
       Timeline.subscribe()
     end
 
+    tweets = get_tweets(socket)
+
     {:ok,
      socket
      |> stream_configure(:tweets, dom_id: &"tweets-#{&1.id}")
-     |> stream(:tweets, get_tweets(socket))
+     |> stream(:tweets, tweets)
      |> stream(:logs, [])}
   end
 
@@ -26,7 +28,7 @@ defmodule TwittexWeb.TweetLive.Index do
 
   @impl true
   def handle_event("like", %{"tweet-id" => tweet_id, "index" => tweet_index}, socket) do
-    case Timeline.manage(%{tweet_id: tweet_id, user: socket.assigns.current_profile}, :toggle_like) do
+    case Timeline.manage(%{tweet_id: tweet_id, profile: socket.assigns.current_profile}, :toggle_like) do
       {:ok, like} ->
         tweet = Timeline.find_tweet_by_id(like.tweet_id, socket.assigns.current_profile.id)
         {:noreply, stream_insert(socket, :tweets, tweet, at: tweet_index)}

@@ -7,7 +7,7 @@ defmodule Twittex.Timeline.Queries.GetTweetsQuery do
 
   def build do
     from tweet in Tweet,
-      preload: [:likes, :comments, :profile],
+      preload: [:likes, :profile, comments: [:profile]],
       order_by: [desc: tweet.inserted_at]
   end
 

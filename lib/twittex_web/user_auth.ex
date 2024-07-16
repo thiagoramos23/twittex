@@ -94,10 +94,11 @@ defmodule TwittexWeb.UserAuth do
   def fetch_current_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Accounts.get_user_by_session_token(user_token)
+    profile = if user, do: user.profile
 
     conn
     |> assign(:current_user, user)
-    |> assign(:current_profile, user.profile)
+    |> assign(:current_profile, profile)
   end
 
   defp ensure_user_token(conn) do
@@ -179,14 +180,16 @@ defmodule TwittexWeb.UserAuth do
   end
 
   defp mount_current_user(socket, session) do
-    if user_token = session["user_token"] do
-      current_user = Accounts.get_user_by_session_token(user_token)
-      Phoenix.Component.assign_new(socket, :current_user, fn -> current_user end)
-
-      Phoenix.Component.assign_new(socket, :current_profile, fn ->
-        if current_user, do: current_user.profile
+    socket =
+      Phoenix.Component.assign_new(socket, :current_user, fn ->
+        if user_token = session["user_token"] do
+          Accounts.get_user_by_session_token(user_token)
+        end
       end)
-    end
+
+    Phoenix.Component.assign_new(socket, :current_profile, fn ->
+      if is_nil(socket.assigns.current_user), do: nil, else: socket.assigns.current_user.profile
+    end)
   end
 
   @doc """

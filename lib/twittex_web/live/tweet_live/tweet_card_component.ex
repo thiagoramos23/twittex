@@ -20,6 +20,23 @@ defmodule TwittexWeb.TweetLive.TweetCardComponent do
         <.comment tweet={@tweet} />
         <.like tweet={@tweet} index={@index} />
       </div>
+      <div :if={length(@tweet.comments) > 0} class="mt-4">
+        <span class="font-semibold antialiased">Comments</span>
+      </div>
+      <div :for={comment <- @tweet.comments} class="mt-4" id="comment-#{comment.id}" class="ml-12">
+        <div class="w-auto pt-5 px-5 pb-2 border-2">
+          <div class="flex flex-col">
+            <div class="flex items-center space-x-2">
+              <span class="font-medium text-pretty">
+                <%= comment.profile.name %>:
+              </span>
+            </div>
+            <div class="ml-2">
+              <%= comment.text %>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     """
   end
