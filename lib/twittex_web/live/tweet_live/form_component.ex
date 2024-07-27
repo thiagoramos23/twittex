@@ -53,10 +53,7 @@ defmodule TwittexWeb.TweetLive.FormComponent do
 
     case Timeline.manage(tweet_params, :create_tweet) do
       {:ok, _tweet} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Tweet created successfully")
-         |> push_patch(to: socket.assigns.patch)}
+        {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}

@@ -14,6 +14,8 @@ defmodule TwittexWeb.TweetLive.Index do
 
     tweets = get_tweets(socket)
 
+    Twittex.Workers.ProfileSupervisor.start_child(socket.assigns.current_profile)
+
     {:ok,
      socket
      |> stream_configure(:tweets, dom_id: &"tweets-#{&1.id}")

@@ -17,7 +17,8 @@ defmodule Twittex.Application do
       # Start a worker by calling: Twittex.Worker.start_link(arg)
       # {Twittex.Worker, arg},
       # Start to serve requests, typically the last entry
-      TwittexWeb.Endpoint
+      TwittexWeb.Endpoint,
+      Twittex.Workers.ProfileSupervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

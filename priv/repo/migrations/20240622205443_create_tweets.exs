@@ -11,5 +11,6 @@ defmodule Twittex.Repo.Migrations.CreateTweets do
     end
 
     create index(:tweets, [:profile_id])
+    create index(:tweets, [:inserted_at])
   end
 end
