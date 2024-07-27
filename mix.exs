@@ -19,7 +19,7 @@ defmodule Twittex.MixProject do
   def application do
     [
       mod: {Twittex.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :wx, :observer, :runtime_tools]
     ]
   end
 
@@ -57,7 +57,7 @@ defmodule Twittex.MixProject do
       {:bandit, "~> 1.5"},
       {:typed_struct, "~> 0.3.0"},
       {:instructor, "~> 0.0.5"},
-      {:styler, "~> 1.0.0-rc.1", only: [:dev, :test], runtime: false},
+      {:styler, "~> 1.0.0-rc.1", only: [:dev, :test], runtime: false}
     ]
   end
 

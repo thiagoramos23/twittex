@@ -2,6 +2,7 @@ defmodule TwittexWeb.TweetLive.Index do
   @moduledoc false
   use TwittexWeb, :live_view
 
+  alias Twittex.Accounts
   alias Twittex.Events.TimelineEvents
   alias Twittex.Timeline
   alias Twittex.Timeline.Domain.Tweet
@@ -14,8 +15,6 @@ defmodule TwittexWeb.TweetLive.Index do
 
     tweets = get_tweets(socket)
 
-    Twittex.Workers.ProfileSupervisor.start_child(socket.assigns.current_profile)
-
     {:ok,
      socket
      |> stream_configure(:tweets, dom_id: &"tweets-#{&1.id}")
@@ -26,6 +25,21 @@ defmodule TwittexWeb.TweetLive.Index do
   @impl true
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  end
+
+  @impl true
+  def handle_event("start_ai", _params, socket) do
+    {:ok, profile} = start_ai_profile(socket.assigns.current_profile)
+    {:noreply, assign(socket, :current_profile, profile)}
+  end
+
+  @impl true
+  def handle_event("start_all_ai", _params, socket) do
+    Enum.each(Accounts.list_all_ai_profiles(), fn profile ->
+      start_ai_profile(profile)
+    end)
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -76,5 +90,10 @@ defmodule TwittexWeb.TweetLive.Index do
   defp get_tweets(socket) do
     params = %{profile_id: socket.assigns.current_profile.id}
     Twittex.Timeline.list(params, :all)
+  end
+
+  defp start_ai_profile(profile) do
+    {:ok, pid} = Twittex.Workers.ProfileSupervisor.start_profile_ai(profile)
+    Accounts.update_profile(profile, %{pid: inspect(pid)})
   end
 end

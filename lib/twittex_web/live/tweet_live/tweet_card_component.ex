@@ -7,7 +7,8 @@ defmodule TwittexWeb.TweetLive.TweetCardComponent do
     <div class="w-auto pt-5 px-5 pb-2 border-2">
       <div class="flex flex-col">
         <div class="flex items-center space-x-2">
-          <img src="https://www.w3schools.com/w3images/avatar2.png" class="rounded-full w-10" />
+          <img :if={is_nil(@tweet.profile.profile_image_url)} src="https://www.w3schools.com/w3images/avatar2.png" class="rounded-full w-10" />
+          <img :if={not is_nil(@tweet.profile.profile_image_url)} src={@tweet.profile.profile_image_url} class="rounded-full w-10" />
           <span class="font-medium text-pretty">
             <%= @tweet.profile.name %>
           </span>

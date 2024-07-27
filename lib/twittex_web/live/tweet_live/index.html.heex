@@ -1,7 +1,18 @@
 <div>
-  <.link patch={~p"/tweets/new"} class="bg-blue-500 p-2 rounded-md text-white antialiased font-normal">
-    New Tweet
-  </.link>
+  <div :if={@current_profile.pid}>
+    This profile is being commanded by an AI process with ID: <%= @current_profile.pid %>
+  </div>
+  <div class="w-auto flex justify-between">
+    <.link patch={~p"/tweets/new"} class="bg-blue-500 p-2 rounded-md text-white antialiased font-normal">
+      New Tweet
+    </.link>
+    <.button phx-click="start_ai" class="p-2 rounded-md text-white antialiased font-normal">
+      Start AI
+    </.button>
+    <.button phx-click="start_all_ai" class="p-2 rounded-md text-white antialiased font-normal">
+      Start ALL AI Profiles
+    </.button>
+  </div>
   <div id="tweets" phx-update="stream">
     <div :for={{id, tweet} <- @streams.tweets} id={id} class="mt-5">
       <.live_component id={id} module={TwittexWeb.TweetLive.TweetCardComponent} tweet={tweet} user={@current_profile}

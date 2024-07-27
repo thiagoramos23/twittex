@@ -79,10 +79,31 @@ defmodule Twittex.Accounts do
   def register_user(attrs) do
     Twittex.Repo.transaction(fn ->
       with {:ok, user} <- create_user(attrs),
-           {:ok, _profile} <- create_profile(attrs, user) do
+           {:ok, _profile} <- create_profile_after_registration(attrs, user) do
         user
       end
     end)
+  end
+
+  def list_all_ai_profiles do
+    Repo.all(from p in Profile, where: p.profile_type == :ai)
+  end
+
+  def reset_all_pids do
+    query = from p in Profile, update: [set: [pid: nil]]
+    Repo.update_all(query, [])
+  end
+
+  def create_profile(attrs) do
+    %Profile{}
+    |> Profile.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_profile(profile, attrs) do
+    profile
+    |> Profile.changeset(attrs)
+    |> Repo.update()
   end
 
   defp create_user(attrs) do
@@ -91,10 +112,8 @@ defmodule Twittex.Accounts do
     |> Repo.insert()
   end
 
-  defp create_profile(attrs, user) do
-    %Profile{}
-    |> Profile.changeset(%{name: attrs["name"], user_id: user.id})
-    |> Repo.insert()
+  defp create_profile_after_registration(attrs, user) do
+    create_profile(%{name: attrs[:name], user_id: user.id})
   end
 
   @doc """

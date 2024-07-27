@@ -4,6 +4,7 @@ defmodule Twittex.AI.Timeline do
   """
   import Ecto.Query
 
+  alias Twittex.Accounts
   alias Twittex.Repo
   alias Twittex.Timeline
 
@@ -41,7 +42,7 @@ defmodule Twittex.AI.Timeline do
   end
 
   def gen_comment(profile, tweet) do
-    Logger.info("#{profile.name} is thinking about making a comment to the tweet: #{tweet.text}")
+    Logger.info("#{profile.name} is thinking about making a comment to the tweet from #{tweet.profile.name}")
 
     {:ok, tweet_embedded} =
       Instructor.chat_completion(
@@ -58,15 +59,28 @@ defmodule Twittex.AI.Timeline do
             Comments are max 400 characters and can contain one or multiple sentences and can or not
             have hashtags. You can either agree or disagree and if you disagree you can be brutally honest.
             Either way you should try to explain your opinion but not too much.
-            Generate a comment using your personality wich is: '#{profile.personality}'
+            Before generating a comment, you should think about your persona: '#{profile.personality}'
+            Think about a comment that is relevant for the discussion about the tweet: '#{tweet.text}'
+            but also matches your persona.
 
-            Your tweet_text is:
+            Based on all of the information above, your tweet_text is:
             """
           }
         ]
       )
 
-    Timeline.manage(%{profile_id: profile.id, text: tweet_embedded.tweet_text, tweet_id: tweet.id}, :create_tweet_comment)
+    Logger.info("#{profile.name} made a comment to the #{tweet.profile.name} tweet saying: #{tweet_embedded.tweet_text}")
+
+    case Timeline.manage(
+           %{profile_id: profile.id, text: tweet_embedded.tweet_text, tweet_id: tweet.id},
+           :create_tweet_comment
+         ) do
+      {:ok, _} ->
+        Accounts.update_profile(profile, %{last_comment_tweet_id: tweet.id})
+
+      {:error, reason} ->
+        Logger.error(reason)
+    end
   end
 
   def gen_tweet(profile) do
@@ -104,21 +118,25 @@ defmodule Twittex.AI.Timeline do
   end
 
   def read_timeline(profile) do
-    from(tweet in Twittex.Timeline.Domain.Tweet, order_by: [desc: tweet.inserted_at], limit: 10)
+    profile
+    |> get_tweets_to_read_query()
     |> Repo.all()
-    |> Enum.each(fn tweet ->
-      Logger.info("#{profile.name} is reading the timeline. Right now reading the tweet '#{tweet.text}'")
+    |> Enum.reduce_while(:ok, fn tweet, acc ->
+      Logger.info("#{profile.name} is reading the timeline. Right now reading the tweet from #{tweet.profile.name}")
       probability = check_intersests(profile, tweet)
 
-      if probability > 0.4 do
-        Logger.info("#{profile.name} found that the tweet '#{tweet.text}' matches their interests")
+      if probability > 0.3 do
+        Logger.info("#{profile.name} found that the tweet from #{tweet.profile.name} matches their interests")
         gen_comment(profile, tweet)
+        {:halt, acc}
+      else
+        {:cont, acc}
       end
     end)
   end
 
   defp check_intersests(profile, tweet) do
-    Logger.info("#{profile.name} is thinking about making a tweet...")
+    Logger.info("#{profile.name} is checking tweets to see if it's interested...")
 
     result =
       Instructor.chat_completion(
@@ -155,5 +173,20 @@ defmodule Twittex.AI.Timeline do
         Logger.error(reason)
         0.0
     end
+  end
+
+  defp get_tweets_to_read_query(profile) do
+    query =
+      from(tweet in Twittex.Timeline.Domain.Tweet,
+        as: :tweet,
+        where: tweet.profile_id != ^profile.id,
+        order_by: [desc: tweet.inserted_at],
+        limit: 10,
+        preload: [:profile]
+      )
+
+    if profile.last_comment_tweet_id,
+      do: where(query, [tweet: tweet], tweet.id != ^profile.last_comment_tweet_id),
+      else: query
   end
 end

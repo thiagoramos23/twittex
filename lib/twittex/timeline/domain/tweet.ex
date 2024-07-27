@@ -19,6 +19,7 @@ defmodule Twittex.Timeline.Domain.Tweet do
   def changeset(tweet, attrs) do
     tweet
     |> cast(attrs, [:text, :image_url, :profile_id])
+    |> validate_length(:text, min: 10, max: 300)
     |> validate_required([:text, :profile_id])
   end
 end

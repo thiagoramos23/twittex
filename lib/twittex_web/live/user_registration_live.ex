@@ -56,7 +56,11 @@ defmodule TwittexWeb.UserRegistrationLive do
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
-    case Accounts.register_user(user_params) do
+    case Accounts.register_user(%{
+           name: user_params["name"],
+           email: user_params["email"],
+           password: user_params["password"]
+         }) do
       {:ok, user} ->
         {:ok, _} =
           Accounts.deliver_user_confirmation_instructions(

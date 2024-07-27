@@ -6,8 +6,9 @@ defmodule Twittex.Repo.Migrations.CreateProfiles do
       add :name, :string, null: false
       add :interests, :text
       add :personality, :text
-      add :profile_type, :string, default: ~c"real", null: false
+      add :profile_type, :string, default: "real", null: false
       add :profile_image_url, :string
+      add :pid, :string
       add :user_id, references(:users, on_delete: :nothing)
 
       timestamps(type: :utc_datetime)
