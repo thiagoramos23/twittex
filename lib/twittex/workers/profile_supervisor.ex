@@ -27,4 +27,10 @@ defmodule Twittex.Workers.ProfileSupervisor do
     Logger.info("Profile Supervisor started #{profile.name} with pid #{inspect(pid)}")
     {:ok, pid}
   end
+
+  def stop_all_profiles do
+    Twittex.Workers.ProfileSupervisor
+    |> DynamicSupervisor.which_children()
+    |> Enum.each(fn {_, pid, _, _} -> DynamicSupervisor.terminate_child(__MODULE__, pid) end)
+  end
 end

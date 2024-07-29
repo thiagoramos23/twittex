@@ -85,6 +85,15 @@ defmodule Twittex.Accounts do
     end)
   end
 
+  @doc """
+  Lists all the profiles
+  """
+  def list_profiles do
+    Repo.all(from(p in Profile))
+  end
+
+  def get_profile!(id), do: Repo.get(Profile, id)
+
   def list_all_ai_profiles do
     Repo.all(from p in Profile, where: p.profile_type == :ai)
   end
@@ -104,6 +113,12 @@ defmodule Twittex.Accounts do
     profile
     |> Profile.changeset(attrs)
     |> Repo.update()
+  end
+
+  def delete_profile(profile), do: Repo.delete(profile)
+
+  def change_profile(profile, attrs \\ %{}) do
+    Profile.changeset(profile, attrs)
   end
 
   defp create_user(attrs) do

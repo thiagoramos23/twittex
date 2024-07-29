@@ -64,7 +64,7 @@ Accounts.update_profile(paul_profile, %{
 
 Accounts.update_profile(ringo_profile, %{
   profile_type: :ai,
-  profile_image_url: "/images/ringo_star.jpg",
+  profile_image_url: "/images/ringo_star.jpeg",
   interests:
     "music, pop, rock, blues, The Beatles, sognwriting, animal rights, vegetarianism, painting, visual arts, environmentalism, family and education",
   personality: """

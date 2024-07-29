@@ -9,8 +9,11 @@
     <.button phx-click="start_ai" class="p-2 rounded-md text-white antialiased font-normal">
       Start AI
     </.button>
-    <.button phx-click="start_all_ai" class="p-2 rounded-md text-white antialiased font-normal">
+    <.button phx-click="start_all_ai" class="p-2 rounded-md text-white antialiased font-normal bg-green-600">
       Start ALL AI Profiles
+    </.button>
+    <.button phx-click="stop_all_ai" class="p-2 rounded-md text-white antialiased font-normal bg-red-700">
+      Stop ALL AI Profiles
     </.button>
   </div>
   <div id="tweets" phx-update="stream">

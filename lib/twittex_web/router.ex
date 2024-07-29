@@ -70,6 +70,12 @@ defmodule TwittexWeb.Router do
       live "/", TweetLive.Index, :index
       live "/tweets/new", TweetLive.Index, :new
       live "/tweets/:tweet_id/comments/new", TweetCommentLive.Index, :new
+
+      live "/profiles", ProfileLive.Index, :index
+      live "/profiles/new", ProfileLive.Index, :new
+      live "/profiles/:id/edit", ProfileLive.Index, :edit
+
+      live "/profiles/:id", ProfileLive.Show, :show
     end
   end
 

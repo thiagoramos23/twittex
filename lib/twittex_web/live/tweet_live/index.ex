@@ -6,6 +6,7 @@ defmodule TwittexWeb.TweetLive.Index do
   alias Twittex.Events.TimelineEvents
   alias Twittex.Timeline
   alias Twittex.Timeline.Domain.Tweet
+  alias Twittex.Workers.ProfileSupervisor
 
   @impl true
   def mount(_params, _session, socket) do
@@ -39,6 +40,12 @@ defmodule TwittexWeb.TweetLive.Index do
       start_ai_profile(profile)
     end)
 
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("stop_all_ai", _params, socket) do
+    stop_all_ai_profiles()
     {:noreply, socket}
   end
 
@@ -93,7 +100,11 @@ defmodule TwittexWeb.TweetLive.Index do
   end
 
   defp start_ai_profile(profile) do
-    {:ok, pid} = Twittex.Workers.ProfileSupervisor.start_profile_ai(profile)
+    {:ok, pid} = ProfileSupervisor.start_profile_ai(profile)
     Accounts.update_profile(profile, %{pid: inspect(pid)})
+  end
+
+  defp stop_all_ai_profiles do
+    ProfileSupervisor.stop_all_profiles()
   end
 end
