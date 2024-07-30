@@ -37,5 +37,5 @@
 </div>
 <div :if={@live_action==:new or @live_action==:edit}>
   <.live_component module={TwittexWeb.ProfileLive.FormComponent} id={@profile.id || :new} action={@live_action}
-    profile={@profile} patch={~p"/profiles"} />
+    profile={@profile} patch={~p"/profiles"} current_user={@current_user} />
 </div>

@@ -13,7 +13,9 @@ defmodule Twittex.Accounts.User do
 
     field :name, :string, virtual: true
 
-    has_one :profile, Twittex.Accounts.Profile
+    # A user can have multiple profiles, but when getting the profile
+    # through the user it can only get the real profile which can only be one
+    has_one :profile, Twittex.Accounts.Profile, where: [profile_type: :real]
     timestamps(type: :utc_datetime)
   end
 
