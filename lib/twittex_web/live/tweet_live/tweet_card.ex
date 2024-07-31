@@ -9,6 +9,10 @@ defmodule TwittexWeb.TweetLive.TweetCard do
     <div :if={@live_action == :index}>
       <.show_timeline tweet={@tweet} index={@index} />
     </div>
+
+    <div :if={@live_action == :show}>
+      <.show_comments tweet={@tweet} />
+    </div>
     """
   end
 
