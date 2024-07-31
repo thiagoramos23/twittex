@@ -3,28 +3,49 @@
     This profile is being commanded by an AI process with ID: <%= @current_profile.pid %>
   </div>
   <div class="w-auto flex justify-between">
-    <.link patch={~p"/tweets/new"} class="bg-blue-500 p-2 rounded-md text-white antialiased font-normal">
+    <.link
+      patch={~p"/tweets/new"}
+      class="bg-blue-500 p-2 rounded-md text-white antialiased font-normal"
+    >
       New Tweet
     </.link>
     <.button phx-click="start_ai" class="p-2 rounded-md text-white antialiased font-normal">
       Start AI
     </.button>
-    <.button phx-click="start_all_ai" class="p-2 rounded-md text-white antialiased font-normal bg-green-600">
+    <.button
+      phx-click="start_all_ai"
+      class="p-2 rounded-md text-white antialiased font-normal bg-green-600"
+    >
       Start ALL AI Profiles
     </.button>
-    <.button phx-click="stop_all_ai" class="p-2 rounded-md text-white antialiased font-normal bg-red-700">
+    <.button
+      phx-click="stop_all_ai"
+      class="p-2 rounded-md text-white antialiased font-normal bg-red-700"
+    >
       Stop ALL AI Profiles
     </.button>
   </div>
   <div id="tweets" phx-update="stream">
     <div :for={{id, tweet} <- @streams.tweets} id={id} class="mt-5">
-      <.live_component id={id} module={TwittexWeb.TweetLive.TweetCardComponent} tweet={tweet} user={@current_profile}
-        index={id} />
+      <.live_component
+        id={id}
+        module={TwittexWeb.TweetLive.TweetCard}
+        tweet={tweet}
+        user={@current_profile}
+        index={id}
+      />
     </div>
   </div>
 </div>
 
 <.modal :if={@live_action in [:new, :edit]} id="post-modal" show on_cancel={JS.patch(~p"/")}>
-  <.live_component module={TwittexWeb.TweetLive.FormComponent} id={@tweet.id || :new} action={@live_action}
-    tweet={@tweet} current_profile={@current_profile} patch={~p"/"} />
+  <.live_component
+    module={TwittexWeb.TweetLive.FormComponent}
+    id={@tweet.id || :new}
+    action={@live_action}
+    tweet={@tweet}
+    current_profile={@current_profile}
+    patch={~p"/"}
+  />
 </.modal>
+

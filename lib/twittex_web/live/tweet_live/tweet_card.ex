@@ -1,14 +1,32 @@
-defmodule TwittexWeb.TweetLive.TweetCardComponent do
+defmodule TwittexWeb.TweetLive.TweetCard do
   @moduledoc false
   use TwittexWeb, :live_component
 
+  alias TwittexWeb.TweetLive.TweetCardComment
+
   def render(assigns) do
+    ~H"""
+    <div :if={@live_action == :index}>
+      <.show_timeline tweet={@tweet} index={@index} />
+    </div>
+    """
+  end
+
+  defp show_timeline(assigns) do
     ~H"""
     <div class="w-auto pt-5 px-5 pb-2 border-2">
       <div class="flex flex-col">
         <div class="flex items-center space-x-2">
-          <img :if={is_nil(@tweet.profile.profile_image_url)} src="https://www.w3schools.com/w3images/avatar2.png" class="rounded-full w-10" />
-          <img :if={not is_nil(@tweet.profile.profile_image_url)} src={@tweet.profile.profile_image_url} class="rounded-full w-10" />
+          <img
+            :if={is_nil(@tweet.profile.profile_image_url)}
+            src="https://www.w3schools.com/w3images/avatar2.png"
+            class="rounded-full w-10"
+          />
+          <img
+            :if={not is_nil(@tweet.profile.profile_image_url)}
+            src={@tweet.profile.profile_image_url}
+            class="rounded-full w-10"
+          />
           <span class="font-medium text-pretty">
             <%= @tweet.profile.name %>
           </span>
@@ -20,23 +38,6 @@ defmodule TwittexWeb.TweetLive.TweetCardComponent do
       <div class="flex justify-start items-center mt-4 space-x-14">
         <.comment tweet={@tweet} />
         <.like tweet={@tweet} index={@index} />
-      </div>
-      <div :if={length(@tweet.comments) > 0} class="mt-4">
-        <span class="font-semibold antialiased">Comments</span>
-      </div>
-      <div :for={comment <- @tweet.comments} class="mt-4" id="comment-#{comment.id}" class="ml-12">
-        <div class="w-auto pt-5 px-5 pb-2 border-2">
-          <div class="flex flex-col">
-            <div class="flex items-center space-x-2">
-              <span class="font-medium text-pretty">
-                <%= comment.profile.name %>:
-              </span>
-            </div>
-            <div class="ml-2">
-              <%= comment.text %>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     """
@@ -54,10 +55,13 @@ defmodule TwittexWeb.TweetLive.TweetCardComponent do
 
   defp comment(assigns) do
     ~H"""
-    <.link navigate={~p"/tweets/#{@tweet.id}/comments/new"}>
+    <.link navigate={~p"/tweets/#{@tweet.id}/comments"}>
       <.icon name="hero-chat-bubble-left" class="w-6 h-6 text-gray-500" />
       <span class="text-gray-500"><%= @tweet.count_comments %></span>
     </.link>
     """
+  end
+
+  defp show_comments(assigns) do
   end
 end
