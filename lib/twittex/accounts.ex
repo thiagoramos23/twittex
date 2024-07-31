@@ -128,7 +128,7 @@ defmodule Twittex.Accounts do
   end
 
   defp create_profile_after_registration(attrs, user) do
-    create_profile(%{name: attrs[:name], user_id: user.id})
+    create_profile(%{name: attrs[:name], profile_type: :real, user_id: user.id})
   end
 
   @doc """

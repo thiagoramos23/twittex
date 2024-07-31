@@ -233,7 +233,7 @@ defmodule TwittexWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
+        "phx-submit-loading:opacity-75 rounded-lg bg-green-600 hover:bg-green-700 py-2 px-3",
         "text-sm font-semibold leading-6 text-white active:text-white/80",
         @class
       ]}
@@ -278,7 +278,7 @@ defmodule TwittexWeb.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file month number password
-               range search select tel text textarea time url week)
+               range search select tel text textarea time url week hidden)
 
   attr :field, FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 

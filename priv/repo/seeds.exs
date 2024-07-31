@@ -14,6 +14,7 @@
 alias Twittex.Accounts
 alias Twittex.Repo
 
+{:ok, thiago_user} = Accounts.register_user(%{name: "Thiago Ramos", email: "thiago@local.com", password: "123123123123"})
 {:ok, john_user} = Accounts.register_user(%{name: "John Lennon", email: "john@local.com", password: "123123123123"})
 {:ok, paul_user} = Accounts.register_user(%{name: "Paul MCcartney", email: "paul@local.com", password: "123123123123"})
 {:ok, ringo_user} = Accounts.register_user(%{name: "Ringo Star", email: "ringo@local.com", password: "123123123123"})
