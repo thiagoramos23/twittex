@@ -9,7 +9,6 @@ defmodule Twittex.Timeline do
   alias Twittex.Repo
   alias Twittex.Timeline.Domain.Like
   alias Twittex.Timeline.Domain.Tweet
-  alias Twittex.Timeline.Domain.TweetComment
   alias Twittex.Timeline.GetTweet
   alias Twittex.Timeline.GetTweets
   alias Twittex.Timeline.Values.Tweet, as: TweetValue
@@ -34,8 +33,8 @@ defmodule Twittex.Timeline do
   end
 
   def manage(params, :create_tweet_comment) do
-    %TweetComment{}
-    |> TweetComment.changeset(params)
+    %Tweet{}
+    |> Tweet.changeset(params)
     |> Repo.insert()
     |> broadcast(:tweet_commented)
   end
@@ -63,10 +62,6 @@ defmodule Twittex.Timeline do
     Tweet.changeset(tweet, params)
   end
 
-  def change_tweet_comment(tweet_comment, params \\ %{}) do
-    TweetComment.changeset(tweet_comment, params)
-  end
-
   defp get_like_for_tweet(profile_id, tweet_id) do
     Repo.one(
       from likes in Like,
@@ -80,14 +75,14 @@ defmodule Twittex.Timeline do
     {:ok, tweet}
   end
 
-  defp broadcast({:ok, tweet_comment}, :tweet_commented) do
+  defp broadcast({:ok, tweet}, :tweet_commented) do
     broadcast!(%TweetCommented{
-      profile_id: tweet_comment.profile_id,
-      tweet_id: tweet_comment.tweet_id,
-      tweet_comment_id: tweet_comment.id
+      profile_id: tweet.profile_id,
+      parent_tweet_id: tweet.parent_tweet_id,
+      tweet_id: tweet.id
     })
 
-    {:ok, tweet_comment}
+    {:ok, tweet}
   end
 
   defp broadcast({:ok, like}, :tweet_liked) do

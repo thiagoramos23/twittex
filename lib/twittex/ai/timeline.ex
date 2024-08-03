@@ -72,7 +72,7 @@ defmodule Twittex.AI.Timeline do
     Logger.info("#{profile.name} made a comment to the #{tweet.profile.name} tweet saying: #{tweet_embedded.tweet_text}")
 
     case Timeline.manage(
-           %{profile_id: profile.id, text: tweet_embedded.tweet_text, tweet_id: tweet.id},
+           %{profile_id: profile.id, text: tweet_embedded.tweet_text, parent_tweet_id: tweet.id},
            :create_tweet_comment
          ) do
       {:ok, _} ->
@@ -125,7 +125,7 @@ defmodule Twittex.AI.Timeline do
       Logger.info("#{profile.name} is reading the timeline. Right now reading the tweet from #{tweet.profile.name}")
       probability = check_intersests(profile, tweet)
 
-      if probability > 0.3 do
+      if probability > 0.5 do
         Logger.info("#{profile.name} found that the tweet from #{tweet.profile.name} matches their interests")
         gen_comment(profile, tweet)
         {:halt, acc}

@@ -3,7 +3,6 @@ defmodule Twittex.Timeline.Values.Tweet do
   use TypedStruct
 
   alias Twittex.Accounts.Values.Profile
-  alias Twittex.Timeline.Values.TweetComment
 
   typedstruct do
     field :id, non_neg_integer(), enforce: true
@@ -13,7 +12,7 @@ defmodule Twittex.Timeline.Values.Tweet do
     field :liked?, boolean(), default: false
     field :count_likes, non_neg_integer(), default: 0
     field :count_comments, non_neg_integer(), default: 0
-    field :comments, list(TweetComment.t()), default: []
+    field :comments, list(__MODULE__.t()), default: []
   end
 
   def from_schema(tweet) do
@@ -24,8 +23,8 @@ defmodule Twittex.Timeline.Values.Tweet do
       profile: Profile.from_schema(tweet.profile),
       liked?: false,
       count_likes: length(tweet.likes),
-      count_comments: length(tweet.comments),
-      comments: TweetComment.from_list(tweet.comments)
+      count_comments: comments_count(tweet),
+      comments: __MODULE__.from_list(tweet.comments)
     }
   end
 
@@ -37,8 +36,22 @@ defmodule Twittex.Timeline.Values.Tweet do
       profile: Profile.from_schema(tweet.profile),
       liked?: liked,
       count_likes: length(tweet.likes),
-      count_comments: length(tweet.comments),
-      comments: TweetComment.from_list(tweet.comments)
+      count_comments: comments_count(tweet),
+      comments: __MODULE__.from_list(tweet.comments)
     }
   end
+
+  def comments_count(tweet) do
+    if Ecto.assoc_loaded?(tweet.comments) do
+      length(tweet.comments)
+    else
+      0
+    end
+  end
+
+  def from_list(comments) when is_list(comments) do
+    Enum.map(comments, &from_schema/1)
+  end
+
+  def from_list(_), do: []
 end

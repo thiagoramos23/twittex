@@ -17,6 +17,6 @@ defmodule Twittex.Events.TimelineEvents do
 
   defmodule TweetCommented do
     @moduledoc false
-    defstruct [:profile_id, :tweet_id, :tweet_comment_id]
+    defstruct [:profile_id, :parent_tweet_id, :tweet_id]
   end
 end

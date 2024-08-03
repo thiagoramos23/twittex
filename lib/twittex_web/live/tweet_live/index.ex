@@ -77,7 +77,7 @@ defmodule TwittexWeb.TweetLive.Index do
   end
 
   @impl true
-  def handle_info({Timeline, %TimelineEvents.TweetCommented{tweet_id: tweet_id}}, socket) do
+  def handle_info({Timeline, %TimelineEvents.TweetCommented{parent_tweet_id: tweet_id}}, socket) do
     update_timeline(tweet_id, socket)
   end
 
@@ -91,12 +91,13 @@ defmodule TwittexWeb.TweetLive.Index do
   end
 
   defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:tweet, %Tweet{})
-    |> assign(:live_action, :new)
+    assign(socket, :tweet, %Tweet{})
   end
 
-  defp apply_action(socket, :show_comments, _params), do: socket
+  defp apply_action(socket, :show_comments, %{"tweet_id" => tweet_id}) do
+    tweet = Twittex.Timeline.find_tweet_by_id(tweet_id, socket.assigns.current_profile.id)
+    assign(socket, :tweet, tweet)
+  end
 
   defp get_tweets(socket) do
     params = %{profile_id: socket.assigns.current_profile.id}

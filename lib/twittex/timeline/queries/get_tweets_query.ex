@@ -7,7 +7,7 @@ defmodule Twittex.Timeline.Queries.GetTweetsQuery do
 
   def build do
     from tweet in Tweet,
-      preload: [:likes, :profile, comments: [:profile]],
+      preload: [:likes, :profile, comments: [:profile, :likes]],
       order_by: [desc: tweet.inserted_at]
   end
 
@@ -25,6 +25,8 @@ defmodule Twittex.Timeline.Queries.GetTweetsQuery do
         liked: not is_nil(like)
       }
   end
+
+  def that_are_no_replies(query), do: from(tweet in query, where: is_nil(tweet.parent_tweet_id))
 
   def by_profile_id(query, profile_id) do
     from tweet in query,

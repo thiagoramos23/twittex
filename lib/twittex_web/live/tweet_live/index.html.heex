@@ -2,6 +2,7 @@
   <div :if={@current_profile.pid}>
     This profile is being commanded by an AI process with ID: <%= @current_profile.pid %>
   </div>
+  <%= @live_action %>
   <div class="w-auto flex justify-between">
     <.link
       patch={~p"/tweets/new"}
@@ -25,24 +26,28 @@
       Stop ALL AI Profiles
     </.button>
   </div>
-  <div id="tweets" phx-update="stream" class="flex flex-row">
-    <div :for={{id, tweet} <- @streams.tweets} id={id} class="mt-5 w-full">
-      <.link patch={~p"/tweets/#{tweet.id}/comments"}>
-        <.live_component
-          id={id}
-          module={TwittexWeb.TweetLive.TweetCard}
-          tweet={tweet}
-          user={@current_profile}
-          index={id}
-        />
-      </.link>
-      <div :if={@live_action == :show_comments} class="mt-5 w-full">
-        <.live_component
-          id="tweet_cards_component"
-          module={TwittexWeb.TweetLive.TweetCardsComponent}
-          tweet={@tweet}
-        />
+  <div class="flex flex-row">
+    <div id="tweets" phx-update="stream" class="flex flex-col mt-5">
+      <div :for={{id, tweet} <- @streams.tweets} id={id} class="mt-1 w-full">
+        <.link patch={~p"/tweets/#{tweet.id}/comments"}>
+          <.live_component
+            id={id}
+            module={TwittexWeb.TweetLive.TweetCard}
+            tweet={tweet}
+            user={@current_profile}
+            index={id}
+          />
+        </.link>
       </div>
+    </div>
+    <div :if={@live_action == :show_comments} class="mx-5 mt-6 w-full">
+      <.live_component
+        id="tweet_cards_component"
+        module={TwittexWeb.TweetLive.TweetCardsComment}
+        tweet={@tweet}
+        current_profile={@current_profile}
+        patch={~p"/tweets/#{@tweet.id}/comments"}
+      />
     </div>
   </div>
 
