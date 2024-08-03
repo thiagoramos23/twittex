@@ -1,9 +1,9 @@
-defmodule TwittexWeb.TweetLive.TweetCardComment do
+defmodule TwittexWeb.TweetLive.TweetCardsComment do
   @moduledoc false
   use TwittexWeb, :live_component
 
   def update(assigns, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, assigns)}
   end
 
   def render(assigns) do
@@ -13,7 +13,7 @@ defmodule TwittexWeb.TweetLive.TweetCardComment do
       <div class="h-24 w-full">
         <.post_reply tweet={@tweet} />
       </div>
-      <.tweet :for={comment <- @comments} tweet={comment} />
+      <.tweet :for={comment <- @tweet.comments} tweet={comment} />
     </div>
     """
   end
@@ -46,18 +46,11 @@ defmodule TwittexWeb.TweetLive.TweetCardComment do
   defp post_reply(assigns) do
     ~H"""
     <div>
-      <.simple_form
-        for={@form}
-        id="post-reply-form"
-        phx-target={@myself}
-        phx-submit="save"
-        <.input
-        type="hidden"
-        name="tweet[profile_id]"
-        value={@current_profile.id}
-      />
-      <.input type="hidden" name="tweet[tweet_id]" value={@tweet.id} />
-      <.input type="textarea" field={@form[:text]} placeholder="Post your reply" />
+      <.simple_form for={@form} id="post-reply-form" phx-target={@myself} phx-submit="save">
+        <.input type="hidden" name="tweet[profile_id]" value={@current_profile.id} />
+        <.input type="hidden" name="tweet[tweet_id]" value={@tweet.id} />
+        <.input type="textarea" field={@form[:text]} placeholder="Post your reply" />
+      </.simple_form>
     </div>
     """
   end

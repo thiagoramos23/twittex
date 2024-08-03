@@ -25,27 +25,37 @@
       Stop ALL AI Profiles
     </.button>
   </div>
-  <div id="tweets" phx-update="stream">
+  <div id="tweets" phx-update="stream" class="flex flex-row">
     <div :for={{id, tweet} <- @streams.tweets} id={id} class="mt-5">
-      <.live_component
-        id={id}
-        module={TwittexWeb.TweetLive.TweetCard}
-        tweet={tweet}
-        user={@current_profile}
-        index={id}
-      />
+      <.link patch={~p"/tweets/#{tweet.id}/comments"}>
+        <.live_component
+          id={id}
+          module={TwittexWeb.TweetLive.TweetCard}
+          tweet={tweet}
+          user={@current_profile}
+          index={id}
+        />
+      </.link>
+      <%= @live_action %>
+      <div :if={@live_action == :show_comments}>
+        <.live_component
+          id="tweet_cards_component"
+          module={TwittexWeb.TweetLive.TweetCardsComponent}
+          tweet={@tweet}
+        />
+      </div>
     </div>
   </div>
-</div>
 
-<.modal :if={@live_action in [:new, :edit]} id="post-modal" show on_cancel={JS.patch(~p"/")}>
-  <.live_component
-    module={TwittexWeb.TweetLive.FormComponent}
-    id={@tweet.id || :new}
-    action={@live_action}
-    tweet={@tweet}
-    current_profile={@current_profile}
-    patch={~p"/"}
-  />
-</.modal>
+  <.modal :if={@live_action in [:new, :edit]} id="post-modal" show on_cancel={JS.patch(~p"/")}>
+    <.live_component
+      module={TwittexWeb.TweetLive.FormComponent}
+      id={@tweet.id || :new}
+      action={@live_action}
+      tweet={@tweet}
+      current_profile={@current_profile}
+      patch={~p"/"}
+    />
+  </.modal>
+</div>
 

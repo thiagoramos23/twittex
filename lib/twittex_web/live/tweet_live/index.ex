@@ -91,8 +91,12 @@ defmodule TwittexWeb.TweetLive.Index do
   end
 
   defp apply_action(socket, :new, _params) do
-    assign(socket, :tweet, %Tweet{})
+    socket
+    |> assign(:tweet, %Tweet{})
+    |> assign(:live_action, :new)
   end
+
+  defp apply_action(socket, :show_comments, _params), do: socket
 
   defp get_tweets(socket) do
     params = %{profile_id: socket.assigns.current_profile.id}

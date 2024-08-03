@@ -2,16 +2,10 @@ defmodule TwittexWeb.TweetLive.TweetCard do
   @moduledoc false
   use TwittexWeb, :live_component
 
-  alias TwittexWeb.TweetLive.TweetCardComment
-
   def render(assigns) do
     ~H"""
-    <div :if={@live_action == :index}>
+    <div>
       <.show_timeline tweet={@tweet} index={@index} />
-    </div>
-
-    <div :if={@live_action == :show}>
-      <.show_comments tweet={@tweet} />
     </div>
     """
   end
@@ -64,8 +58,5 @@ defmodule TwittexWeb.TweetLive.TweetCard do
       <span class="text-gray-500"><%= @tweet.count_comments %></span>
     </.link>
     """
-  end
-
-  defp show_comments(assigns) do
   end
 end

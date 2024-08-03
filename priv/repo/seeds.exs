@@ -10,7 +10,6 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-# TODO: Need to create users and AI profiles so they can start iterating.
 alias Twittex.Accounts
 alias Twittex.Repo
 
