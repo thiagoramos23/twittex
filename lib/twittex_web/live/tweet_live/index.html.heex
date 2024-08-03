@@ -26,7 +26,7 @@
     </.button>
   </div>
   <div id="tweets" phx-update="stream" class="flex flex-row">
-    <div :for={{id, tweet} <- @streams.tweets} id={id} class="mt-5">
+    <div :for={{id, tweet} <- @streams.tweets} id={id} class="mt-5 w-full">
       <.link patch={~p"/tweets/#{tweet.id}/comments"}>
         <.live_component
           id={id}
@@ -36,8 +36,7 @@
           index={id}
         />
       </.link>
-      <%= @live_action %>
-      <div :if={@live_action == :show_comments}>
+      <div :if={@live_action == :show_comments} class="mt-5 w-full">
         <.live_component
           id="tweet_cards_component"
           module={TwittexWeb.TweetLive.TweetCardsComponent}
