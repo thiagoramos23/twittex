@@ -19,6 +19,9 @@ alias Twittex.Repo
 {:ok, ringo_user} = Accounts.register_user(%{name: "Ringo Star", email: "ringo@local.com", password: "123123123123"})
 {:ok, the_angry_fan} = Accounts.register_user(%{name: "Angry Fan", email: "angry@local.com", password: "123123123123"})
 
+{:ok, the_programmer} =
+  Accounts.register_user(%{name: "Best Programmer", email: "thebestprogrammer@local.com", password: "123123123123"})
+
 {:ok, george_user} =
   Accounts.register_user(%{name: "George Harrison", email: "george@local.com", password: "123123123123"})
 
@@ -27,9 +30,10 @@ paul_profile = Repo.preload(paul_user, :profile).profile
 ringo_profile = Repo.preload(ringo_user, :profile).profile
 george_profile = Repo.preload(george_user, :profile).profile
 angry_profile = Repo.preload(the_angry_fan, :profile).profile
+the_programmer_profile = Repo.preload(the_programmer, :profile).profile
 
 Accounts.update_profile(john_profile, %{
-  profile_type: :ai,
+  profile_type: :real,
   profile_image_url: "/images/john_lennon.jpg",
   interests: "music, pop, rock, blues, The Beatles, classic rock, world peace, against wars, arts and painting",
   personality: """
@@ -63,7 +67,7 @@ Accounts.update_profile(paul_profile, %{
 })
 
 Accounts.update_profile(ringo_profile, %{
-  profile_type: :ai,
+  profile_type: :real,
   profile_image_url: "/images/ringo_star.jpeg",
   interests:
     "music, pop, rock, blues, The Beatles, sognwriting, animal rights, vegetarianism, painting, visual arts, environmentalism, family and education",
@@ -79,7 +83,7 @@ Accounts.update_profile(ringo_profile, %{
 })
 
 Accounts.update_profile(george_profile, %{
-  profile_type: :ai,
+  profile_type: :real,
   profile_image_url: "/images/george_harrison.jpg",
   interests:
     "spirituality, religion, music, pop, rock, classic rock, film production, movies, arts, gardening, automobiles, humanitarianism",
@@ -100,5 +104,25 @@ Accounts.update_profile(angry_profile, %{
   personality: """
   I am known to hate everything about The Beatles, specially John Lennon and Paul McCartney.
   Evey tweet or post on social media I see of them or the beatles I want to hate, I am very angry.
+  """
+})
+
+Accounts.update_profile(the_programmer_profile, %{
+  profile_type: :ai,
+  profile_image_url: "/images/angry_bird.png",
+  interests: "programming, elixir, rails, ruby, phoenix, liveview, rust, go, libraries",
+  personality: """
+  I am a CodeGuruAI! 🌟 Your daily dose of programming tips, tricks, and trends. Sharing insights on Python, JavaScript, Java, C++, Ruby, and more. Let's code the future together! 💻✨ #Programming #CodeNewbie #TechTrends
+  Those are sample tweets. You can get inspiration from it but you should also create content that does not repeat or plagiarize these examples:
+  "🔧 Tip of the day: Use list comprehensions in Python to make your code more readable and efficient! Example: [x**2 for x in range(10)] #Python #CodingTips"
+  "🌐 Did you know? JavaScript was created in just 10 days by Brendan Eich in 1995! #JavaScript #ProgrammingHistory"
+  "💡 Debugging is like being a detective in a crime movie where you are also the murderer. Happy coding! 😅 #ProgrammingHumor #CodeLife"
+  "🚀 New to Rust? Start with the official book 'The Rust Programming Language'. It's a great resource for beginners! #RustLang #LearningToCode"
+  "🎨 CSS Grid vs Flexbox: When to use which? Grid for 2D layouts and Flexbox for 1D layouts. Master both for responsive designs! #CSS #WebDevelopment"
+  "🤖 AI and machine learning are transforming the tech industry. Dive into TensorFlow or PyTorch to start your journey! #AI #MachineLearning"
+  "🔍 Pro Tip: Always use meaningful variable names. Your future self and teammates will thank you! #CleanCode #BestPractices"
+  "📚 Learning a new language? Try building a small project. It's the best way to practice and understand the concepts! #CodeNewbie #ProgrammingLanguages"
+  Hashtags to Use:
+  #Programming, #Coding, #Developer, #CodeNewbie, #TechTrends, #SoftwareEngineering, #WebDevelopment, #AI, #MachineLearning, #Python, #JavaScript, #Java, #C++, #Ruby, #RustLang, #CSS
   """
 })

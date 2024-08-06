@@ -19,7 +19,6 @@ defmodule TwittexWeb.ProfileLive.FormComponent do
           phx-submit="save"
         >
           <.input type="hidden" name="profile[user_id]" value={@current_user.id} />
-          <.input type="hidden" name="profile[profile_type]" value="ai" />
           <div phx-drop-target={@uploads.profile_image.ref}>
             <.live_file_input upload={@uploads.profile_image} />
           </div>
@@ -34,6 +33,12 @@ defmodule TwittexWeb.ProfileLive.FormComponent do
             <.live_img_preview entry={hd(@uploads.profile_image.entries)} class="rounded-full" />
           </div>
           <.input field={@form[:name]} type="text" label="Name" />
+          <.input
+            field={@form[:profile_type]}
+            type="select"
+            label="Type"
+            options={[{"Real", :real}, {"AI", :ai}]}
+          />
           <.input
             field={@form[:interests]}
             type="text"

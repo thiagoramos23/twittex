@@ -13,8 +13,8 @@ defmodule TwittexWeb.TweetLive.TweetCardsComment do
       <div class="w-full mb-5">
         <.post_reply tweet={@tweet} form={@form} myself={@myself} current_profile={@current_profile} />
       </div>
-      <div id="tweet_comments" phx-update="stream">
-        <.tweet :for={{id, comment} <- @streams.comments} id={id} tweet={comment} />
+      <div :if={@tweet.count_comments > 0} id="tweet_comments" phx-update="stream">
+        <.tweet :for={{_id, comment} <- @streams.comments} tweet={comment} />
       </div>
     </div>
     """
@@ -50,7 +50,7 @@ defmodule TwittexWeb.TweetLive.TweetCardsComment do
 
   defp tweet(assigns) do
     ~H"""
-    <div class="flex flex-col mt-3">
+    <div id={"comments-#{@tweet.id}"} class="flex flex-col mt-3">
       <div class="flex items-center space-x-2">
         <img
           :if={is_nil(@tweet.profile.profile_image_url)}

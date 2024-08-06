@@ -125,7 +125,7 @@ defmodule Twittex.AI.Timeline do
       Logger.info("#{profile.name} is reading the timeline. Right now reading the tweet from #{tweet.profile.name}")
       probability = check_intersests(profile, tweet)
 
-      if probability > 0.5 do
+      if probability > 0.7 do
         Logger.info("#{profile.name} found that the tweet from #{tweet.profile.name} matches their interests")
         gen_comment(profile, tweet)
         {:halt, acc}
