@@ -64,7 +64,7 @@ if config_env() == :prod do
     secret_key_base: secret_key_base
 
   config :twittex, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
-
+  config :twittex, :openai_key, System.fetch_env!("OPENAI_API_KEY")
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key

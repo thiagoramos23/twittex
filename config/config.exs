@@ -25,6 +25,9 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :openai,
+  create_image_url: "https://api.openai.com/v1/images/generations"
+
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
