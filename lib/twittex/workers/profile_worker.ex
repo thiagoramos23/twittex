@@ -4,6 +4,7 @@ defmodule Twittex.Workers.ProfileWorker do
   """
   use GenServer
 
+  alias Twittex.Accounts
   alias Twittex.AI.Timeline
   alias Twittex.Workers.ProfileWorker.ActionSelector
 
@@ -37,6 +38,12 @@ defmodule Twittex.Workers.ProfileWorker do
     {:noreply, state}
   end
 
+  def handle_info(:read_comments, state) do
+    read_comments(state.profile)
+    schedule_action(20)
+    {:noreply, state}
+  end
+
   def handle_info(:choose_action, state) do
     action = ActionSelector.random_action()
     Logger.info("Action choosed: #{action} for #{state.profile.name}...")
@@ -61,9 +68,14 @@ defmodule Twittex.Workers.ProfileWorker do
     Timeline.read_timeline(profile)
   end
 
+  defp read_comments(profile) do
+    Logger.info("Profile #{profile.name} is reading comments made in their posts...")
+    Timeline.read_comments_in_your_posts(profile)
+  end
+
   defmodule ActionSelector do
     @moduledoc false
-    @actions [{:post, 0, 0.20}, {:sleep, 0.21, 0.50}, {:read, 0.51, 1.0}]
+    @actions [{:post, 0, 0.20}, {:sleep, 0.21, 0.50}, {:read, 0.51, 0.75}, {:read_comments, 0.76, 1.0}]
 
     def random_action do
       random_value = :rand.uniform()

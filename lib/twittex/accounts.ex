@@ -6,6 +6,7 @@ defmodule Twittex.Accounts do
   import Ecto.Query, warn: false
 
   alias Twittex.Accounts.Profile
+  alias Twittex.Accounts.Thought
   alias Twittex.Accounts.User
   alias Twittex.Accounts.UserNotifier
   alias Twittex.Accounts.UserToken
@@ -129,6 +130,12 @@ defmodule Twittex.Accounts do
 
   defp create_profile_after_registration(attrs, user) do
     create_profile(%{name: attrs[:name], profile_type: :real, user_id: user.id})
+  end
+
+  def create_thought(attrs) do
+    %Thought{}
+    |> Thought.changeset(attrs)
+    |> Repo.insert()
   end
 
   @doc """

@@ -53,6 +53,10 @@ defmodule Twittex.Timeline do
     end
   end
 
+  def initialize_ai(profile_id) do
+    Twittex.AI.Profile.start(profile_id)
+  end
+
   def find_tweet_by_id(id, profile_id) do
     result = GetTweet.call(id, profile_id)
     TweetValue.from_map(result)
