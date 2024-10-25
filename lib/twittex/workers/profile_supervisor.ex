@@ -21,11 +21,16 @@ defmodule Twittex.Workers.ProfileSupervisor do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
+  @doc """
+  This function starts the profile server that runs the profile AI
+  and updates the profile with the pid of the process returning the
+  updated profile.
+  """
   def start_profile_ai(profile) do
     spec = {ProfileWorker, %{profile: profile}}
     {:ok, pid} = DynamicSupervisor.start_child(__MODULE__, spec)
     Logger.info("Profile Supervisor started #{profile.name} with pid #{inspect(pid)}")
-    {:ok, pid}
+    Accounts.update_profile(profile, %{pid: inspect(pid)})
   end
 
   def stop_all_profiles do

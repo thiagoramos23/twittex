@@ -89,5 +89,12 @@ defmodule TwittexWeb.Router do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
+
+    live "/tests", TestLive.Index, :index
+    live "/tests/new", TestLive.Index, :new
+    live "/tests/:id/edit", TestLive.Index, :edit
+
+    live "/tests/:id", TestLive.Show, :show
+    live "/tests/:id/show/edit", TestLive.Show, :edit
   end
 end

@@ -3,6 +3,7 @@ defmodule TwittexWeb.TweetLive.Index do
   use TwittexWeb, :live_view
 
   alias Twittex.Accounts
+  alias Twittex.AI.Profile
   alias Twittex.Events.TimelineEvents
   alias Twittex.Timeline
   alias Twittex.Timeline.Domain.Tweet
@@ -63,7 +64,7 @@ defmodule TwittexWeb.TweetLive.Index do
 
   @impl true
   def handle_info({Timeline, %TimelineEvents.TweetCreated{tweet_id: tweet_id}}, socket) do
-    update_timeline(tweet_id, socket)
+    update_timeline(tweet_id, socket, at: 0)
   end
 
   @impl true
@@ -77,13 +78,13 @@ defmodule TwittexWeb.TweetLive.Index do
   end
 
   @impl true
-  def handle_info({Timeline, %TimelineEvents.TweetCommented{parent_tweet_id: tweet_id}}, socket) do
-    update_timeline(tweet_id, socket)
+  def handle_info({Timeline, %TimelineEvents.TweetCommented{parent_tweet_id: parent_tweet_id}}, socket) do
+    update_timeline(parent_tweet_id, socket)
   end
 
-  defp update_timeline(tweet_id, socket) do
+  defp update_timeline(tweet_id, socket, opts \\ []) do
     tweet = Timeline.find_tweet_by_id(tweet_id, socket.assigns.current_profile.id)
-    {:noreply, stream_insert(socket, :tweets, tweet, at: 0)}
+    {:noreply, stream_insert(socket, :tweets, tweet, opts)}
   end
 
   defp apply_action(socket, :index, _params) do
@@ -105,8 +106,7 @@ defmodule TwittexWeb.TweetLive.Index do
   end
 
   defp start_ai_profile(profile) do
-    {:ok, pid} = ProfileSupervisor.start_profile_ai(profile)
-    Accounts.update_profile(profile, %{pid: inspect(pid)})
+    Profile.start(profile.id)
   end
 
   defp stop_all_ai_profiles do

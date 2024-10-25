@@ -83,7 +83,7 @@ defmodule TwittexWeb.ProfileLive.FormComponent do
   end
 
   defp save_profile(socket, :edit, profile_params) do
-    profile_params = Map.put(profile_params, "profile_image_url", consume_uploaded_profile(socket))
+    profile_params = update_profile_image(socket, profile_params)
 
     case Accounts.update_profile(socket.assigns.profile, profile_params) do
       {:ok, profile} ->
@@ -100,8 +100,7 @@ defmodule TwittexWeb.ProfileLive.FormComponent do
   end
 
   defp save_profile(socket, :new, profile_params) do
-    profile_params = Map.put(profile_params, "profile_image_url", consume_uploaded_profile(socket))
-    IO.inspect(profile_params, label: "PROFILE PARAMS")
+    profile_params = update_profile_image(socket, profile_params)
 
     case Accounts.create_profile(profile_params) do
       {:ok, profile} ->
@@ -130,4 +129,14 @@ defmodule TwittexWeb.ProfileLive.FormComponent do
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
+
+  defp update_profile_image(socket, profile_params) do
+    image_url = consume_uploaded_profile(socket)
+
+    if image_url do
+      Map.put(profile_params, "profile_image_url", image_url)
+    else
+      profile_params
+    end
+  end
 end

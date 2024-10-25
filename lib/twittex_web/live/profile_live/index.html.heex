@@ -1,4 +1,4 @@
-<div :if={@live_action==:index}>
+<div :if={@live_action == :index}>
   <.header>
     Listing Profiles
     <:actions>
@@ -8,9 +8,11 @@
     </:actions>
   </.header>
 
-  <.table id="profiles" rows={@streams.profiles} row_click={fn {_id, profile} -> JS.navigate(~p"/profiles/#{profile}")
-    end}
-    >
+  <.table
+    id="profiles"
+    rows={@streams.profiles}
+    row_click={fn {_id, profile} -> JS.navigate(~p"/profiles/#{profile}") end}
+  >
     <:col :let={{_id, profile}} label="Image">
       <img src={profile.profile_image_url} class="rounded-full w-10" />
     </:col>
@@ -24,18 +26,30 @@
       <div class="sr-only">
         <.link navigate={~p"/profiles/#{profile}"}>Show</.link>
       </div>
+      <div></div>
+      <.button class="mx-4 bg-blue-600" phx-click="start_ai" phx-value-profile-id={profile.id}>
+        Start AI
+      </.button>
       <.link patch={~p"/profiles/#{profile}/edit"}>Edit</.link>
     </:action>
     <:action :let={{id, profile}}>
-      <.link phx-click={JS.push("delete", value: %{id: profile.id}) |> hide("##{id}")}
+      <.link
+        phx-click={JS.push("delete", value: %{id: profile.id}) |> hide("##{id}")}
         data-confirm="Are you sure?"
-        >
+      >
         Delete
       </.link>
     </:action>
   </.table>
 </div>
-<div :if={@live_action==:new or @live_action==:edit}>
-  <.live_component module={TwittexWeb.ProfileLive.FormComponent} id={@profile.id || :new} action={@live_action}
-    profile={@profile} patch={~p"/profiles"} current_user={@current_user} />
+<div :if={@live_action == :new or @live_action == :edit}>
+  <.live_component
+    module={TwittexWeb.ProfileLive.FormComponent}
+    id={@profile.id || :new}
+    action={@live_action}
+    profile={@profile}
+    patch={~p"/profiles"}
+    current_user={@current_user}
+  />
 </div>
+
