@@ -28,10 +28,12 @@ defmodule Twittex.AI.Timeline do
     @doc """
     ## Field Descriptions:
     - match_probability: 0.0 - 1.0. Is the probability that the tweet text will be similar to the user profile interests
+    - why: The reason why the probability is the number it is.
     """
     @primary_key false
     embedded_schema do
       field(:match_probability, :float)
+      field(:why, :string)
     end
 
     def validate_changeset(changeset) do
@@ -128,6 +130,7 @@ defmodule Twittex.AI.Timeline do
       probability = check_intersests(profile, tweet)
 
       if probability > 0.5 do
+        Accounts.create_thought(%{profile_id: profile.id, text: "Tweet matches my interest because: #{probability.why}"})
         Logger.info("#{profile.name} found that the tweet from #{tweet.profile.name} matches their interests")
         gen_comment(profile, tweet)
         {:halt, acc}
@@ -179,10 +182,11 @@ defmodule Twittex.AI.Timeline do
             A post will match your interests if it has similarities to the #{profile.interests}.
             You should use a scale of 0.0 to 1.0 where 0.0 means that the post does not match your interests at all
             and 1.0 means that the post matches your interests perfectly.
+            You should also inform the reason why the match_probability is the number you are returning.
 
             This is the post text: '#{tweet.text}'
 
-            Your match_probability is:
+            Your match_probability and the reason for the probability is:
             """
           }
         ]
