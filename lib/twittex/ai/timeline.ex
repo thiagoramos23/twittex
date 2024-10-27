@@ -47,7 +47,7 @@ defmodule Twittex.AI.Timeline do
   def gen_comment(profile, tweet) do
     {:ok, tweet_embedded} =
       Instructor.chat_completion(
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         response_model: TweetEmbed,
         messages: [
           %{
@@ -76,7 +76,7 @@ defmodule Twittex.AI.Timeline do
          ) do
       {:ok, tweet} ->
         Accounts.update_profile(profile, %{last_comment_tweet_id: tweet.id})
-        create_action(profile, :comment, "Commented on #{tweet.profile.name}'s tweet: #{tweet_embedded.tweet_text}")
+        create_action(profile, :comment, "Commented on #{profile.name}'s tweet: #{tweet_embedded.tweet_text}")
         {:ok, tweet}
 
       {:error, reason} ->
@@ -87,7 +87,7 @@ defmodule Twittex.AI.Timeline do
   def gen_tweet(profile) do
     {:ok, tweet_embedded} =
       Instructor.chat_completion(
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         response_model: TweetEmbed,
         messages: [
           %{
@@ -132,7 +132,7 @@ defmodule Twittex.AI.Timeline do
       probability = check_intersests(profile, tweet)
 
       if probability > 0.5 do
-        create_action(profile, :why_comment, "Tweet matches my interest because: #{probability.why}")
+        create_action(profile, :why_comment, "#{probability.why}")
         gen_comment(profile, tweet)
         {:halt, acc}
       else
@@ -148,7 +148,12 @@ defmodule Twittex.AI.Timeline do
       probability = check_intersests(profile, tweet)
 
       if probability > 0.7 do
-        create_action(profile, :why_comment, "Tweet matches my interest because: #{probability.why}")
+        create_action(
+          profile,
+          :why_comment,
+          "This is a comment on my post because I saw someone making a comment. Here it is why: #{probability.why}"
+        )
+
         gen_comment(profile, tweet)
         {:halt, acc}
       else
@@ -160,7 +165,7 @@ defmodule Twittex.AI.Timeline do
   defp check_intersests(profile, tweet) do
     result =
       Instructor.chat_completion(
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         response_model: ProfileMatchProbability,
         messages: [
           %{

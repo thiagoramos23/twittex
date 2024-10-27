@@ -6,7 +6,7 @@ defmodule Twittex.Accounts.Action do
 
   schema "actions" do
     field :text, :string
-    field :action_type, Ecto.Enum, values: [:waking_up, :post, :read_timeline, :read_comments, :why_comment]
+    field :action_type, Ecto.Enum, values: [:waking_up, :post, :read_timeline, :read_comments, :why_comment, :comment]
     belongs_to :profile, Twittex.Accounts.Profile
 
     timestamps(type: :utc_datetime)

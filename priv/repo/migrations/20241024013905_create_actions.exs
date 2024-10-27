@@ -3,7 +3,7 @@ defmodule Twittex.Repo.Migrations.CreateActions do
 
   def change do
     create table(:actions) do
-      add :text, :string, null: false
+      add :text, :text, null: false
       add :action_type, :string, null: false
       add :profile_id, references(:profiles, on_delete: :nothing), null: false
 

@@ -2,6 +2,7 @@
   <div :if={@current_profile.pid}>
     This profile is being commanded by an AI process with ID: <%= @current_profile.pid %>
   </div>
+  <h2 class="text-2xl mb-5">Tweets</h2>
   <div class="flex flex-row">
     <div id="tweets" phx-update="stream" class="flex flex-col space-y-1">
       <div :for={{id, tweet} <- @streams.tweets} id={id} class="space-y-1">

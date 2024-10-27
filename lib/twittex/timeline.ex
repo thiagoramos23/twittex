@@ -10,6 +10,7 @@ defmodule Twittex.Timeline do
   alias Twittex.Timeline.Domain.Like
   alias Twittex.Timeline.Domain.Tweet
   alias Twittex.Timeline.GetTweet
+  alias Twittex.Timeline.GetTweetByProfile
   alias Twittex.Timeline.GetTweets
   alias Twittex.Timeline.Values.Tweet, as: TweetValue
 
@@ -23,6 +24,11 @@ defmodule Twittex.Timeline do
   def list(params, :all) do
     result = GetTweets.call(params)
     Enum.map(result, &TweetValue.from_map/1)
+  end
+
+  def list_by_profile(profile_id) do
+    result = GetTweetByProfile.call(profile_id)
+    Enum.map(result, &TweetValue.from_schema/1)
   end
 
   def manage(params, :create_tweet) do

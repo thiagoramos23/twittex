@@ -134,6 +134,10 @@ defmodule Twittex.Accounts do
 
   def get_all_actions, do: Repo.all(from a in Action, order_by: [desc: a.inserted_at], preload: [:profile])
 
+  def list_actions_by_profile(profile_id) do
+    Repo.all(from a in Action, where: a.profile_id == ^profile_id, order_by: [desc: a.inserted_at], preload: [:profile])
+  end
+
   def create_action(attrs) do
     %Action{}
     |> Action.changeset(attrs)
