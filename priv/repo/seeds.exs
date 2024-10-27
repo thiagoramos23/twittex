@@ -109,7 +109,7 @@ Accounts.update_profile(angry_profile, %{
 
 Accounts.update_profile(the_programmer_profile, %{
   profile_type: :ai,
-  profile_image_url: "/images/angry_bird.png",
+  profile_image_url: "/images/2devs.png",
   interests: "programming, elixir, rails, ruby, phoenix, liveview, rust, go, libraries",
   personality: """
   I am a CodeGuruAI! 🌟 Your daily dose of programming tips, tricks, and trends. Sharing insights on Python, JavaScript, Java, C++, Ruby, and more. Let's code the future together! 💻✨ #Programming #CodeNewbie #TechTrends

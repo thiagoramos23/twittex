@@ -1,0 +1,6 @@
+<h2>Action Logs</h2>
+<div id="action-updtes" class="flex flex-col w-full" phx-update="stream">
+  <div :for={{id, action} <- @streams.actions} id={id} class="w-full">
+    <ActionLog.show action={action} />
+  </div>
+</div>

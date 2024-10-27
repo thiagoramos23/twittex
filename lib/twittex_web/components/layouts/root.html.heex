@@ -15,7 +15,10 @@
   <body class="bg-white h-screen w-full">
     <div class="flex">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
-      <div class="flex w-1/6 flex-col gap-y-5 overflow-y-auto bg-gray-100 px-6 pb-4 ring-1 ring-white/10">
+      <div
+        :if={@current_user}
+        class="flex w-1/6 flex-col gap-y-5 overflow-y-auto bg-gray-100 px-6 pb-4 ring-1 ring-white/10"
+      >
         <div class="flex h-16 shrink-0 items-center">
           <img
             class="h-8 w-auto"
@@ -57,6 +60,15 @@
                     class="group flex gap-x-3 rounded-md bg-gray-300 p-2 text-sm font-semibold leading-6 text-gray-900"
                   >
                     <.icon name="hero-user-circle" class="h-6 w-6" /> Profiles
+                  </.link>
+                </li>
+                <li>
+                  <!-- Current: "bg-gray-800 text-white", Default: "text-gray-400 hover:text-white hover:bg-gray-800" -->
+                  <.link
+                    href="/actions"
+                    class="group flex gap-x-3 rounded-md bg-gray-300 p-2 text-sm font-semibold leading-6 text-gray-900"
+                  >
+                    <.icon name="hero-user-circle" class="h-6 w-6" /> All Actions
                   </.link>
                 </li>
               </ul>

@@ -76,6 +76,7 @@ defmodule TwittexWeb.Router do
       live "/profiles/:id/edit", ProfileLive.Index, :edit
 
       live "/profiles/:id", ProfileLive.Show, :show
+      live "/actions", ActionLive.Index, :index
     end
   end
 

@@ -45,8 +45,6 @@ defmodule Twittex.AI.Timeline do
   end
 
   def gen_comment(profile, tweet) do
-    Logger.info("#{profile.name} is thinking about making a comment to the tweet from #{tweet.profile.name}")
-
     {:ok, tweet_embedded} =
       Instructor.chat_completion(
         model: "gpt-4",
@@ -72,14 +70,14 @@ defmodule Twittex.AI.Timeline do
         ]
       )
 
-    Logger.info("#{profile.name} made a comment to the #{tweet.profile.name} tweet saying: #{tweet_embedded.tweet_text}")
-
     case Timeline.manage(
            %{profile_id: profile.id, text: tweet_embedded.tweet_text, parent_tweet_id: tweet.id},
            :create_tweet_comment
          ) do
-      {:ok, _} ->
+      {:ok, tweet} ->
         Accounts.update_profile(profile, %{last_comment_tweet_id: tweet.id})
+        create_action(profile, :comment, "Commented on #{tweet.profile.name}'s tweet: #{tweet_embedded.tweet_text}")
+        {:ok, tweet}
 
       {:error, reason} ->
         Logger.error(reason)
@@ -87,8 +85,6 @@ defmodule Twittex.AI.Timeline do
   end
 
   def gen_tweet(profile) do
-    Logger.info("#{profile.name} is thinking about making a tweet...")
-
     {:ok, tweet_embedded} =
       Instructor.chat_completion(
         model: "gpt-4",
@@ -118,7 +114,14 @@ defmodule Twittex.AI.Timeline do
         ]
       )
 
-    Timeline.manage(%{profile_id: profile.id, text: tweet_embedded.tweet_text}, :create_tweet)
+    case Timeline.manage(%{profile_id: profile.id, text: tweet_embedded.tweet_text}, :create_tweet) do
+      {:ok, tweet} ->
+        create_action(profile, :post, "Tweeted: #{tweet.text}")
+        {:ok, tweet}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
   end
 
   def read_timeline(profile) do
@@ -126,12 +129,10 @@ defmodule Twittex.AI.Timeline do
     |> get_tweets_to_read_query()
     |> Repo.all()
     |> Enum.reduce_while(:ok, fn tweet, acc ->
-      Logger.info("#{profile.name} is reading the timeline. Right now reading the tweet from #{tweet.profile.name}")
       probability = check_intersests(profile, tweet)
 
       if probability > 0.5 do
-        Accounts.create_thought(%{profile_id: profile.id, text: "Tweet matches my interest because: #{probability.why}"})
-        Logger.info("#{profile.name} found that the tweet from #{tweet.profile.name} matches their interests")
+        create_action(profile, :why_comment, "Tweet matches my interest because: #{probability.why}")
         gen_comment(profile, tweet)
         {:halt, acc}
       else
@@ -144,14 +145,10 @@ defmodule Twittex.AI.Timeline do
     profile
     |> get_comments_in_your_posts()
     |> Enum.reduce_while(:ok, fn tweet, acc ->
-      Logger.info(
-        "#{profile.name} is reading comments made in your posts. Right now reading the comment from #{tweet.profile.name}"
-      )
-
       probability = check_intersests(profile, tweet)
 
       if probability > 0.7 do
-        Logger.info("#{profile.name} found that the tweet from #{tweet.profile.name} matches their interests")
+        create_action(profile, :why_comment, "Tweet matches my interest because: #{probability.why}")
         gen_comment(profile, tweet)
         {:halt, acc}
       else
@@ -161,8 +158,6 @@ defmodule Twittex.AI.Timeline do
   end
 
   defp check_intersests(profile, tweet) do
-    Logger.info("#{profile.name} is checking tweets to see if it's interested...")
-
     result =
       Instructor.chat_completion(
         model: "gpt-4",
@@ -232,5 +227,13 @@ defmodule Twittex.AI.Timeline do
     if profile.last_comment_tweet_id,
       do: where(query, [tweet: tweet], tweet.id != ^profile.last_comment_tweet_id),
       else: query
+  end
+
+  defp create_action(profile, action_type, action) do
+    Accounts.create_action(%{
+      profile_id: profile.id,
+      action_type: action_type,
+      text: action
+    })
   end
 end

@@ -5,8 +5,8 @@ defmodule Twittex.Accounts do
 
   import Ecto.Query, warn: false
 
+  alias Twittex.Accounts.Action
   alias Twittex.Accounts.Profile
-  alias Twittex.Accounts.Thought
   alias Twittex.Accounts.User
   alias Twittex.Accounts.UserNotifier
   alias Twittex.Accounts.UserToken
@@ -132,10 +132,13 @@ defmodule Twittex.Accounts do
     create_profile(%{name: attrs[:name], profile_type: :real, user_id: user.id})
   end
 
-  def create_thought(attrs) do
-    %Thought{}
-    |> Thought.changeset(attrs)
+  def get_all_actions, do: Repo.all(from a in Action, order_by: [desc: a.inserted_at], preload: [:profile])
+
+  def create_action(attrs) do
+    %Action{}
+    |> Action.changeset(attrs)
     |> Repo.insert()
+    |> broadcast()
   end
 
   @doc """
@@ -408,4 +411,16 @@ defmodule Twittex.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  @pubsub Twittex.PubSub
+  @topic "actions"
+  def subscribe do
+    Phoenix.PubSub.subscribe(@pubsub, @topic)
+  end
+
+  defp broadcast({:ok, action}) do
+    Phoenix.PubSub.broadcast!(@pubsub, @topic, {:action_created, Repo.preload(action, [:profile])})
+  end
+
+  defp broadcast({:error, _} = error), do: error
 end
