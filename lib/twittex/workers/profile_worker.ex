@@ -32,13 +32,13 @@ defmodule Twittex.Workers.ProfileWorker do
 
   def handle_info(:read, state) do
     read_timeline(state.profile)
-    schedule_action(20)
+    schedule_action(10)
     {:noreply, state}
   end
 
   def handle_info(:read_comments, state) do
     read_comments(state.profile)
-    schedule_action(20)
+    schedule_action(10)
     {:noreply, state}
   end
 
@@ -48,7 +48,7 @@ defmodule Twittex.Workers.ProfileWorker do
     {:noreply, state}
   end
 
-  defp schedule_action(seconds \\ 15) do
+  defp schedule_action(seconds \\ 5) do
     Process.send_after(self(), :choose_action, :timer.seconds(seconds))
   end
 
